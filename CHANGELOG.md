@@ -4,6 +4,27 @@ All notable changes to Phos CLI will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.2.0] - 2025-02-09
+
+### Changed
+
+- **Template System Refactor**:
+  - All generators now use template files instead of dynamic generation
+  - Handlebars templating with conditional logic
+  - Dynamic configuration support (projectName, projectType, tooling options)
+  - Clean separation between generators and templates
+- **Template Structure**:
+  - Backend templates: Elysia, FastAPI with full project structures
+  - Frontend templates: Astro, Svelte, Next.js with proper configs
+  - All templates use Handlebars variables for customization
+- **Helper Functions**:
+  - `eq` helper for equality checks in templates
+  - `or` helper for OR conditions in templates
+  - `copyTemplate` function for template copying and rendering
+- **ESLint Configuration**:
+  - Added `.eslintignore` to exclude template folder
+  - Prevents false positives from Handlebars syntax in templates
+
 ## [0.1.0] - 2025-02-09
 
 ### Added
@@ -20,7 +41,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Multiple package manager support (npm, yarn, pnpm, bun)
 - **Project Structure**:
   - Well-organized codebase with generators, templates, and utilities
-  - TypeScript path aliases configured (@/*)
+  - TypeScript path aliases configured (@/\*)
   - Comprehensive documentation (AGENTS.md, CHANGELOG.md, README.md)
 - **Configuration**:
   - TypeScript strict mode enabled

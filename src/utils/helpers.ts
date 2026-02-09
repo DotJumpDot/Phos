@@ -4,6 +4,14 @@ import pc from 'picocolors';
 import { execSync } from 'child_process';
 import { resolve, join } from 'path';
 
+Handlebars.registerHelper('eq', function (a, b) {
+  return a === b;
+});
+
+Handlebars.registerHelper('or', function (...args) {
+  return args.slice(0, -1).some(Boolean);
+});
+
 export interface GeneratorConfig {
   projectName: string;
   projectType: 'monorepo' | 'single';
