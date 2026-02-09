@@ -4,6 +4,8 @@
 
 Full-stack interactive project generator CLI that scaffolds modern web applications with configurable backends and frontends.
 
+**Version:** 1.0.0 (Production Release)
+
 ### Core Features:
 
 1. **Interactive CLI** - Beautiful prompts using @clack/prompts
@@ -148,7 +150,7 @@ npm install <package>
 
 ## 8. Versioning
 
-Follow semantic versioning:
+Phos CLI follows semantic versioning:
 
 - **x.y.z (Patch/Bugfix)**: `0.0.x`, `1.0.x`, `2.0.x`
   - Bug fixes
@@ -164,3 +166,7 @@ Follow semantic versioning:
   - Major architectural changes
   - Complete rewrites
   - Production-ready releases
+
+**Current Version: 1.0.0** - Production Release
+
+See [CHANGELOG.md](CHANGELOG.md) for detailed version history.

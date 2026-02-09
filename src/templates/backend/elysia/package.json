@@ -1,12 +1,23 @@
 {
-  "name": "elysia",
-  "version": "1.0.50",
+  "name": "{{backendName}}",
+  "version": "0.1.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "{{packageManager}} run --watch src/index.ts",
+    "build": "{{packageManager}} build src/index.ts",
+    "start": "{{packageManager}} run dist/index.js"
   },
   "dependencies": {
-    "elysia": "latest"
+    "@elysiajs/cors": "latest",
+    "@elysiajs/swagger": "latest",
+    "@types/bcrypt": "latest",
+    "@types/jsonwebtoken": "latest",
+    "bcrypt": "latest",
+    "dotenv": "latest",
+    "elysia": "latest",
+    "jsonwebtoken": "latest",
+    "postgres": "^3.4.8",
+    "uuid": "latest"
   },
   "devDependencies": {
     "bun-types": "latest"

@@ -9,6 +9,8 @@ Full-stack interactive project generator CLI
 [![Node.js Version](https://img.shields.io/node/v/phos)](https://nodejs.org)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
+**Version 1.0.0 - Production Release** 🎉
+
 </div>
 
 ---
@@ -30,6 +32,8 @@ Phos is a powerful CLI tool that scaffolds modern full-stack web applications wi
 - 🔤 Multiple package manager support (npm, yarn, pnpm, bun)
 - 📝 Automatic README generation
 - 🌳 Git initialization
+- 🎯 Single project mode for standalone applications
+- 📚 Comprehensive documentation auto-generation
 
 ## Quick Start
 
@@ -69,8 +73,8 @@ Phos will guide you through a series of questions to configure your project:
 
 1. **Project Name** - Name of your new project
 2. **Project Type** - Monorepo or Single repo
-3. **Backend Framework** - Elysia or FastAPI
-4. **Backend Package Manager** - npm, yarn, pnpm, or bun
+3. **Backend Framework** - Elysia or FastAPI (Monorepo mode)
+4. **Backend Package Manager** - npm, yarn, pnpm, bun, venv, or pip
 5. **Backend: Use TypeScript?** - Enable TypeScript for backend
 6. **Backend: Add ESLint?** - Add ESLint configuration
 7. **Backend: Add Prettier?** - Add Prettier configuration
@@ -84,6 +88,38 @@ Phos will guide you through a series of questions to configure your project:
 15. **Add Testing?** - No, Vitest, Playwright, or both
 16. **Initialize Git?** - Initialize a Git repository
 17. **Install Dependencies?** - Auto-install dependencies after generation
+
+## Project Types
+
+### Monorepo Mode
+
+Generates a full-stack monorepo with separate backend and frontend projects:
+
+```
+my-project/
+├── MyProject_Backend/    # Backend application
+├── MyProject_Frontend/   # Frontend application
+├── Docs/                 # Documentation folder
+│   ├── Feature/          # Feature documentation
+│   └── DatabaseSetup/    # Database setup scripts
+├── AGENTS.md             # Agent guidelines
+├── LICENSE               # License file
+├── env.example           # Environment variables template
+└── README.md             # Project README
+```
+
+### Single Project Mode
+
+Generates a standalone backend or frontend project:
+
+```
+my-project/
+├── src/                  # Source code
+├── public/               # Static assets (frontend)
+├── package.json          # Dependencies
+├── tsconfig.json         # TypeScript config
+└── README.md             # Project documentation
+```
 
 ## Tech Stack
 
@@ -129,6 +165,80 @@ bun run build
 node dist/cli.js create
 ```
 
+## Examples
+
+### Create a Monorepo with Elysia and Next.js
+
+```bash
+phos create
+# Project name: my-awesome-app
+# Project type: Monorepo
+# Backend Framework: Elysia
+# Backend package manager: bun
+# Backend: Use TypeScript? Yes
+# Backend: Add ESLint? Yes
+# Backend: Add Prettier? Yes
+# Frontend Framework: NextJS
+# Frontend package manager: bun
+# Frontend: Use TypeScript? Yes
+# Frontend: Add ESLint? Yes
+# Frontend: Add Prettier? Yes
+# CSS Framework: Tailwind CSS
+# UI Components: shadcn/ui
+# Testing: Vitest + Playwright
+# Initialize Git? Yes
+# Install dependencies? No
+```
+
+### Create a Single Astro Project
+
+```bash
+phos create
+# Project name: my-astro-site
+# Project type: Single repo
+# Framework: Astro
+# Package manager: bun
+# Use TypeScript? Yes
+# Add ESLint? Yes
+# Add Prettier? Yes
+# CSS Framework: Tailwind CSS
+# UI Components: No
+# Testing: Vitest
+# Initialize Git? Yes
+# Install dependencies? No
+```
+
+## Generated Projects Include
+
+### Backend (Elysia/FastAPI)
+
+- Pre-configured framework setup
+- Example API endpoints
+- Service layer architecture
+- Database connection setup
+- TypeScript/Python type definitions
+- ESLint/Pylint configuration
+- Prettier/Black configuration
+
+### Frontend (Astro/Svelte/Next.js)
+
+- Pre-configured framework setup
+- Example components and pages
+- Responsive layout
+- CSS framework integration
+- TypeScript configuration
+- ESLint configuration
+- Prettier configuration
+- Testing setup (Vitest/Playwright)
+
+### Documentation
+
+- Comprehensive README.md
+- AGENTS.md with project guidelines
+- Database schema documentation
+- Feature documentation templates
+- Environment variable templates
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
@@ -138,6 +248,17 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
+
+## Versioning
+
+Phos follows [semantic versioning](https://semver.org/).
+
+- **1.0.0** - Production release with full feature support
+- **1.0.x** - Patch releases (bug fixes, documentation)
+- **1.x.0** - Minor releases (new features, non-breaking changes)
+- **x.0.0** - Major releases (breaking changes)
+
+See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
 ## Acknowledgments
 
@@ -153,6 +274,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 <div align="center">
 
-Made with ❤️ by the Phos team
+Made with ❤️ by the DotJumpDot
 
 </div>

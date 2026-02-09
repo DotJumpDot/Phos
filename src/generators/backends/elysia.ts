@@ -3,6 +3,7 @@ import {
   logSuccess,
   copyTemplate,
   type GeneratorConfig,
+  capitalize,
 } from "@/utils/helpers.js";
 import { resolve } from "path";
 import fs from "fs-extra";
@@ -23,13 +24,20 @@ export async function generateElysiaBackend(
   await createDirectory(srcPath);
 
   const templatePath = resolve(process.cwd(), "src/templates/backend/elysia");
-  await copyTemplate(templatePath, projectPath, config as unknown as Record<string, unknown>);
+  const backendName = `${capitalize(config.projectName)}_Backend`;
 
-  if (!config.backend.eslint) {
+  const templateData = {
+    ...config,
+    backendName,
+  };
+
+  await copyTemplate(templatePath, projectPath, templateData as unknown as Record<string, unknown>);
+
+  if (!config.backend?.eslint) {
     await removeFileIfExists(`${projectPath}/.eslintrc.js`);
   }
 
-  if (!config.backend.prettier) {
+  if (!config.backend?.prettier) {
     await removeFileIfExists(`${projectPath}/.prettierrc`);
   }
 

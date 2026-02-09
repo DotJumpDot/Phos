@@ -5,10 +5,10 @@ import {
   logStep,
   logSuccess,
   logInfo,
-  installDependencies,
   initializeGit,
   type GeneratorConfig,
-} from '@/utils/helpers.js';
+  capitalize,
+} from "@/utils/helpers.js";
 import { generateElysiaBackend } from "@/generators/backends/elysia.js";
 import { generateFastAPIBackend } from "@/generators/backends/fastapi.js";
 import { generateAstroFrontend } from "@/generators/frontends/astro.js";
@@ -21,160 +21,73 @@ export async function generateSingle(config: GeneratorConfig): Promise<void> {
   logStep(`Creating single project at ${projectPath}`);
   await createDirectory(projectPath);
 
-  await generateRootPackageJson(projectPath, config);
+  const docsPath = `${projectPath}/Docs`;
+  await createDirectory(docsPath);
+
   await generateGitIgnore(projectPath);
   await generateReadme(projectPath, config);
+  await generateAgentsMd(projectPath, config);
+  await generateLicense(projectPath, config);
+  await generateEnvExample(projectPath);
 
-  const srcPath = `${projectPath}/src`;
-  await createDirectory(srcPath);
-
-  switch (config.backend.framework) {
-    case "elysia":
-      await generateElysiaBackend(projectPath, config);
-      break;
-    case "fastapi":
-      await generateFastAPIBackend(projectPath, config);
-      break;
+  if (config.backend?.framework) {
+    await createDirectory(`${projectPath}/src`);
+    switch (config.backend.framework) {
+      case "elysia":
+        await generateElysiaBackend(projectPath, config);
+        break;
+      case "fastapi":
+        await generateFastAPIBackend(projectPath, config);
+        break;
+    }
+  } else if (config.frontend?.framework) {
+    await createDirectory(`${projectPath}/src`);
+    switch (config.frontend.framework) {
+      case "astro":
+        await generateAstroFrontend(projectPath, config);
+        break;
+      case "svelte":
+        await generateSvelteFrontend(projectPath, config);
+        break;
+      case "nextjs":
+        await generateNextJSFrontend(projectPath, config);
+        break;
+    }
   }
 
-  switch (config.frontend.framework) {
-    case "astro":
-      await generateAstroFrontend(projectPath, config);
-      break;
-    case "svelte":
-      await generateSvelteFrontend(projectPath, config);
-      break;
-    case "nextjs":
-      await generateNextJSFrontend(projectPath, config);
-      break;
-  }
+  await createDirectory(`${docsPath}/Feature`);
+  await createDirectory(`${docsPath}/DatabaseSetup`);
+  await generateSchemaDocs(docsPath, config);
+
+  logSuccess(`Project created at ${config.projectName}`);
+  logSuccess("Docs folder created");
 
   if (config.git) {
     await initializeGit(projectPath);
   }
 
-  if (config.install) {
-    await installDependencies(projectPath, config.frontend.packageManager);
+  if (config.backend?.framework) {
+    const backendInstallCmd =
+      config.backend.framework === "fastapi" && config.backend.packageManager === "venv"
+        ? `chmod +x setup.sh && ./setup.sh`
+        : config.backend.packageManager === "venv" || config.backend.packageManager === "pip"
+          ? `pip install -r requirements.txt`
+          : `${config.backend.packageManager} install`;
+    const backendRunCmd =
+      config.backend.framework === "fastapi"
+        ? `python src/main.py`
+        : `${config.backend.packageManager} run dev`;
+
+    logInfo("\n📦 Next steps:");
+    logInfo(`  cd ${config.projectName}`);
+    logInfo(`  ${backendInstallCmd}`);
+    logInfo(`  ${backendRunCmd}`);
+  } else if (config.frontend?.framework) {
+    logInfo("\n📦 Next steps:");
+    logInfo(`  cd ${config.projectName}`);
+    logInfo(`  ${config.frontend.packageManager} install`);
+    logInfo(`  ${config.frontend.packageManager} run dev`);
   }
-
-  logSuccess("Project created successfully");
-
-  logInfo("\n📦 Next steps:");
-  logInfo(`  cd ${config.projectName}`);
-  logInfo(`  ${config.frontend.packageManager} install`);
-  logInfo(`  ${config.frontend.packageManager} run dev`);
-}
-
-async function generateRootPackageJson(
-  projectPath: string,
-  config: GeneratorConfig
-): Promise<void> {
-  const packageManager = config.frontend.packageManager;
-
-  const dependencies: Record<string, string> = {};
-  const devDependencies: Record<string, string> = {};
-
-  if (config.frontend.framework === "astro") {
-    dependencies["astro"] = "^4.0.0";
-  } else if (config.frontend.framework === "svelte") {
-    dependencies["@sveltejs/kit"] = "^2.0.0";
-    dependencies["svelte"] = "^4.0.0";
-  } else if (config.frontend.framework === "nextjs") {
-    dependencies["next"] = "^14.0.0";
-    dependencies["react"] = "^18.0.0";
-    dependencies["react-dom"] = "^18.0.0";
-  }
-
-  if (config.backend.framework === "elysia") {
-    dependencies["elysia"] = "^1.0.0";
-    dependencies["@elysiajs/cors"] = "^1.0.0";
-  }
-
-  if (config.frontend.cssFramework === "tailwind") {
-    dependencies["tailwindcss"] = "^3.4.0";
-    dependencies["postcss"] = "^8.4.0";
-    dependencies["autoprefixer"] = "^10.4.0";
-  }
-
-  if (config.frontend.uiComponents === "shadcn") {
-    dependencies["class-variance-authority"] = "^0.7.0";
-    dependencies["clsx"] = "^2.1.0";
-    dependencies["tailwind-merge"] = "^2.2.0";
-  } else if (config.frontend.uiComponents === "radix") {
-    dependencies["@radix-ui/react-slot"] = "^1.0.0";
-  }
-
-  if (config.frontend.testing === "vitest" || config.frontend.testing === "both") {
-    devDependencies["vitest"] = "^1.0.0";
-    devDependencies["@vitest/ui"] = "^1.0.0";
-  }
-
-  if (config.frontend.testing === "playwright" || config.frontend.testing === "both") {
-    devDependencies["@playwright/test"] = "^1.40.0";
-  }
-
-  if (config.frontend.eslint) {
-    devDependencies["eslint"] = "^8.57.0";
-    devDependencies["@typescript-eslint/parser"] = "^7.0.0";
-    devDependencies["@typescript-eslint/eslint-plugin"] = "^7.0.0";
-  }
-
-  if (config.frontend.prettier) {
-    devDependencies["prettier"] = "^3.2.0";
-  }
-
-  if (config.frontend.typescript) {
-    devDependencies["typescript"] = "^5.3.0";
-  }
-
-  const scripts: Record<string, string> = {
-    dev: "astro dev",
-    build: "astro build",
-    preview: "astro preview",
-  };
-
-  if (config.frontend.framework === "svelte") {
-    scripts.dev = "vite dev";
-    scripts.build = "vite build";
-    scripts.preview = "vite preview";
-  } else if (config.frontend.framework === "nextjs") {
-    scripts.dev = "next dev";
-    scripts.build = "next build";
-    scripts.start = "next start";
-    scripts.lint = "next lint";
-  }
-
-  if (config.frontend.testing === "vitest" || config.frontend.testing === "both") {
-    scripts.test = "vitest";
-  }
-
-  if (config.frontend.testing === "playwright" || config.frontend.testing === "both") {
-    scripts["test:e2e"] = "playwright test";
-  }
-
-  if (config.frontend.eslint) {
-    scripts.lint = "eslint . --ext .js,.jsx,.ts,.tsx,.svelte";
-  }
-
-  if (config.frontend.prettier) {
-    scripts.format = 'prettier --write "**/*.{js,jsx,ts,tsx,json,css,md}"';
-  }
-
-  const content = JSON.stringify(
-    {
-      name: config.projectName,
-      version: "0.1.0",
-      type: "module",
-      scripts,
-      dependencies,
-      devDependencies,
-    },
-    null,
-    2
-  );
-
-  await writeFile(`${projectPath}/package.json`, content);
-  logSuccess("package.json created");
 }
 
 async function generateGitIgnore(projectPath: string): Promise<void> {
@@ -226,6 +139,18 @@ pnpm-debug.log*
 # Svelte
 .svelte-kit/
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+*.egg-info/
+.eggs/
+dist/
+build/
+
 # IDE
 .idea/
 .vscode/
@@ -239,36 +164,302 @@ pnpm-debug.log*
 }
 
 async function generateReadme(projectPath: string, config: GeneratorConfig): Promise<void> {
-  const content = `# ${config.projectName}
+  let content = `# ${config.projectName}
 
 This project was generated by [Phos](https://github.com/yourusername/phos).
 
 ## Getting Started
 
-\`\`\`bash
-${config.frontend.packageManager} install
-${config.frontend.packageManager} run dev
-\`\`\`
+`;
 
-## Available Scripts
+  if (config.backend?.framework) {
+    content += `\`\`\`bash
+${
+  config.backend!.packageManager === "venv" || config.backend!.packageManager === "pip"
+    ? "pip install -r requirements.txt"
+    : `${config.backend!.packageManager} install`
+}
+${config.backend!.framework === "fastapi" ? "python src/main.py" : `${config.backend!.packageManager} run dev`}
+\`\`\``;
+  } else if (config.frontend?.framework) {
+    content += `\`\`\`bash
+${config.frontend!.packageManager} install
+${config.frontend!.packageManager} run dev
+\`\`\``;
+  }
 
-- \`${config.frontend.packageManager} run dev\` - Start development server
-- \`${config.frontend.packageManager} run build\` - Build for production
-- \`${config.frontend.packageManager} run preview\` - Preview production build
-${config.frontend.eslint ? `- \`${config.frontend.packageManager} run lint\` - Run ESLint\n` : ""}${config.frontend.prettier ? `- \`${config.frontend.packageManager} run format\` - Format code with Prettier\n` : ""}${config.frontend.testing !== "none" ? `- \`${config.frontend.packageManager} run test\` - Run tests\n` : ""}
+  content += `
 
 ## Tech Stack
-
-- Framework: ${config.frontend.framework}
-- Package Manager: ${config.frontend.packageManager}
-- TypeScript: ${config.frontend.typescript ? "Yes" : "No"}
-- ESLint: ${config.frontend.eslint ? "Yes" : "No"}
-- Prettier: ${config.frontend.prettier ? "Yes" : "No"}
-- CSS Framework: ${config.frontend.cssFramework}
-- UI Components: ${config.frontend.uiComponents}
-- Testing: ${config.frontend.testing}
 `;
+
+  if (config.backend?.framework) {
+    content += `- Framework: ${config.backend!.framework}
+- Package Manager: ${config.backend!.packageManager}
+- TypeScript: ${config.backend!.typescript ? "Yes" : "No"}
+- ESLint: ${config.backend!.eslint ? "Yes" : "No"}
+- Prettier: ${config.backend!.prettier ? "Yes" : "No"}
+`;
+  } else if (config.frontend?.framework) {
+    content += `- Framework: ${config.frontend!.framework}
+- Package Manager: ${config.frontend!.packageManager}
+- TypeScript: ${config.frontend!.typescript ? "Yes" : "No"}
+- ESLint: ${config.frontend!.eslint ? "Yes" : "No"}
+- Prettier: ${config.frontend!.prettier ? "Yes" : "No"}
+- CSS Framework: ${config.frontend!.cssFramework}
+- UI Components: ${config.frontend!.uiComponents}
+- Testing: ${config.frontend!.testing}
+`;
+  }
 
   await writeFile(`${projectPath}/README.md`, content);
   logSuccess("README.md created");
+}
+
+async function generateAgentsMd(projectPath: string, config: GeneratorConfig): Promise<void> {
+  const projectName = config.projectName;
+
+  const content = `# AGENTS Guidelines for This Repository
+
+## Project Name: ${projectName}
+
+This project was generated by [Phos](https://github.com/yourusername/phos).
+
+### Core Features:
+- Fast and interactive project setup
+- Modern framework support
+- Type-safe configurations
+- ESLint and Prettier support
+- Testing infrastructure
+
+### Project Structure:
+\`\`\`
+${projectName}/
+├── src/              # Source code
+├── Docs/              # Documentation
+│   ├── Feature/       # Feature documentation
+│   └── DatabaseSetup/ # Database scripts
+├── README.md          # Project documentation
+├── .gitignore         # Git ignore rules
+└── LICENSE            # License file
+\`\`\`
+
+### Development Workflow:
+1. Make changes to source code in \`src/\`
+2. Update documentation in \`Docs/\` as needed
+3. Test changes thoroughly
+4. Commit with clear, descriptive messages
+
+### Agent Guidelines:
+- Follow existing code style and conventions
+- Add proper type annotations where applicable
+- Write tests for new features
+- Update README.md for major changes
+- Use clear, descriptive variable/function names
+- Comment complex logic for maintainability
+
+### Best Practices:
+- Run linter before committing (ESLint, Prettier)
+- Test on different environments before deployment
+- Keep dependencies updated and secure
+- Write clear, concise commit messages
+- Review pull requests thoroughly before merging
+
+### Troubleshooting:
+- Check documentation first
+- Review recent changes if issues arise
+- Use version control to revert problematic changes
+- Ask for help in team channels when stuck
+`;
+
+  await writeFile(`${projectPath}/AGENTS.md`, content);
+  logSuccess("AGENTS.md created");
+}
+
+async function generateLicense(projectPath: string, config: GeneratorConfig): Promise<void> {
+  const year = new Date().getFullYear();
+  const content = `MIT License
+
+Copyright (c) ${year} ${config.projectName}
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+`;
+
+  await writeFile(`${projectPath}/LICENSE`, content);
+  logSuccess("LICENSE created");
+}
+
+async function generateEnvExample(projectPath: string): Promise<void> {
+  const content = `# Database
+DB_HOST=localhost
+DB_NAME=your_db_name
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_PORT=5433
+
+# URLs
+FRONTEND_BASE_URL=http://localhost:4200
+BACKEND_BASE_URL=http://localhost:4100
+
+# JWT Configuration for rest API
+JWT_SECRET=your-super-secret-jwt-key-change-in-production
+JWT_EXPIRES_IN=60m
+
+# Encryption
+ENCRYPTION_SALT=your-super-secret-salt-change-in-production
+
+# API Keys
+X_API_KEY=1234
+`;
+
+  await writeFile(`${projectPath}/env.example`, content);
+  logSuccess("env.example created");
+}
+
+async function generateSchemaDocs(docsPath: string, config: GeneratorConfig): Promise<void> {
+  const projectName = config.projectName;
+  const content = `# ${projectName} Database Schema
+
+## Table of Contents
+
+- [${projectName} Database Schema](#${projectName.toLowerCase()}-database-schema)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Core Entities](#core-entities)
+    - [Entity Name](#entity-name)
+  - [Entity Relationships](#entity-relationships)
+  - [SQL Schema](#sql-schema)
+    - [Create Tables](#create-tables)
+  - [Sample Data](#sample-data)
+  - [Data Types Notes](#data-types-notes)
+  - [Migration Notes](#migration-notes)
+
+---
+
+## Overview
+
+This document describes the complete database schema for ${projectName}, including all entities, relationships, and sample data.
+
+---
+
+## Core Entities
+
+### Entity Name
+
+| Column      | Type     | Nullable | Description                        |
+| ----------- | -------- | -------- | ---------------------------------- |
+| id          | int      | No       | Primary key, auto-incremented ID   |
+| uuid        | string   | No       | Unique identifier                  |
+| column_name | str      | Yes/No   | Description of column              |
+| created_at  | datetime | No       | Record creation timestamp (UTC)    |
+| updated_at  | datetime | Yes      | Record last update timestamp (UTC) |
+
+---
+
+## Entity Relationships
+
+\`\`\`
+table1 (1) ──── (many) table2
+table3 (many) ──── (1) table4
+\`\`\`
+
+---
+
+## SQL Schema
+
+### Create Tables
+
+For PostgreSQL deployment, use the following schema:
+
+\`\`\`sql
+-- Drop tables if they exist (for clean setup)
+DROP TABLE IF EXISTS child_table;
+DROP TABLE IF EXISTS parent_table;
+
+-- Parent table
+CREATE TABLE parent_table (
+    id SERIAL PRIMARY KEY,
+    uuid TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+-- Child table
+CREATE TABLE child_table (
+    id TEXT PRIMARY KEY,
+    parent_id TEXT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (parent_id) REFERENCES parent_table(uuid)
+);
+
+-- Add foreign key constraints if needed
+ALTER TABLE child_table ADD CONSTRAINT fk_child_parent FOREIGN KEY (parent_id) REFERENCES parent_table(uuid);
+
+-- Performance indexes
+CREATE INDEX idx_parent_table_uuid ON parent_table(uuid);
+CREATE INDEX idx_child_table_parent_id ON child_table(parent_id);
+CREATE INDEX idx_child_table_created_at ON child_table(created_at);
+\`\`\`
+
+---
+
+## Sample Data
+
+\`\`\`sql
+-- Insert sample data for parent table
+INSERT INTO parent_table (uuid, name, description, created_at)
+VALUES ('550e8400-e29b-41d4-a716-4466554400000', 'Sample Name', 'Sample description', CURRENT_TIMESTAMP);
+
+-- Insert sample data for child table
+INSERT INTO child_table (id, parent_id, content, created_at, updated_at)
+VALUES ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', '550e8400-e29b-41d4-a716-4466554400000', 'Sample content', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+\`\`\`
+
+---
+
+## Data Types Notes
+
+- **UUID**: Stored as TEXT for simplicity
+- **Arrays**: Stored as native PostgreSQL arrays (e.g., text[])
+- **JSON**: Stored as JSONB for PostgreSQL (or TEXT for SQLite)
+- **Boolean**: Stored as BOOLEAN for PostgreSQL (or INTEGER 0/1 for SQLite)
+- **Decimal**: Stored as DECIMAL for precision calculations
+- **Datetime**: Stored as TIMESTAMP with CURRENT_TIMESTAMP defaults
+
+---
+
+## Migration Notes
+
+When deploying to production:
+
+1. Consider using PostgreSQL for better JSON support and performance
+2. Add proper UUID generation in application code
+3. Implement database migrations for schema changes
+4. Add database constraints and triggers as needed
+5. Run \`ALTER TABLE\` statements for schema additions
+6. Test migrations on staging environment before production
+`;
+
+  await writeFile(`${docsPath}/Schema.md`, content);
+  logSuccess("Schema.md created");
 }

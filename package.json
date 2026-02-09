@@ -1,6 +1,6 @@
 {
   "name": "phos",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Full-stack interactive project generator CLI - Phos",
   "type": "module",
   "bin": {
@@ -18,7 +18,7 @@
     "create",
     "phos"
   ],
-  "author": "",
+  "author": "DotJumpDot",
   "license": "MIT",
   "dependencies": {
     "@clack/prompts": "^1.0.0",
