@@ -52,6 +52,13 @@ export async function copyTemplate(
 ): Promise<void> {
   const files = await fs.readdir(templatePath, { withFileTypes: true });
 
+  const binaryExtensions = [
+    '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.webp',
+    '.woff', '.woff2', '.ttf', '.otf', '.eot',
+    '.pdf', '.zip', '.tar', '.gz', '.7z',
+    '.bin', '.exe', '.dll', '.so', '.dylib'
+  ];
+
   for (const file of files) {
     const srcPath = join(templatePath, file.name);
     const destPath = join(outputPath, file.name);
@@ -60,10 +67,17 @@ export async function copyTemplate(
       await createDirectory(destPath);
       await copyTemplate(srcPath, destPath, data);
     } else {
-      let content = await fs.readFile(srcPath, 'utf-8');
-      const template = Handlebars.compile(content);
-      const rendered = template(data);
-      await writeFile(destPath, rendered);
+      const ext = file.name.toLowerCase();
+      const isBinary = binaryExtensions.some(binExt => ext.endsWith(binExt));
+
+      if (isBinary) {
+        await fs.copy(srcPath, destPath);
+      } else {
+        let content = await fs.readFile(srcPath, 'utf-8');
+        const template = Handlebars.compile(content);
+        const rendered = template(data);
+        await writeFile(destPath, rendered);
+      }
     }
   }
 }

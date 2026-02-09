@@ -84,7 +84,7 @@ program
 
     const backendUseTypeScript = await confirm({
       message: "Backend: Use TypeScript?",
-      initialValue: false,
+      initialValue: true,
     });
 
     if (typeof backendUseTypeScript !== "boolean") {
@@ -94,7 +94,7 @@ program
 
     const backendAddESLint = await confirm({
       message: "Backend: Add ESLint?",
-      initialValue: false,
+      initialValue: true,
     });
 
     if (typeof backendAddESLint !== "boolean") {
@@ -104,7 +104,7 @@ program
 
     const backendAddPrettier = await confirm({
       message: "Backend: Add Prettier?",
-      initialValue: false,
+      initialValue: true,
     });
 
     if (typeof backendAddPrettier !== "boolean") {
@@ -143,7 +143,7 @@ program
 
     const frontendUseTypeScript = await confirm({
       message: "Frontend: Use TypeScript?",
-      initialValue: false,
+      initialValue: true,
     });
 
     if (typeof frontendUseTypeScript !== "boolean") {
@@ -153,7 +153,7 @@ program
 
     const frontendAddESLint = await confirm({
       message: "Frontend: Add ESLint?",
-      initialValue: false,
+      initialValue: true,
     });
 
     if (typeof frontendAddESLint !== "boolean") {
@@ -163,7 +163,7 @@ program
 
     const frontendAddPrettier = await confirm({
       message: "Frontend: Add Prettier?",
-      initialValue: false,
+      initialValue: true,
     });
 
     if (typeof frontendAddPrettier !== "boolean") {

@@ -5,10 +5,10 @@ import {
   logStep,
   logSuccess,
   logInfo,
-  installDependencies,
   initializeGit,
+  capitalize,
   type GeneratorConfig,
-} from '@/utils/helpers.js';
+} from "@/utils/helpers.js";
 import { generateElysiaBackend } from "@/generators/backends/elysia.js";
 import { generateFastAPIBackend } from "@/generators/backends/fastapi.js";
 import { generateAstroFrontend } from "@/generators/frontends/astro.js";
@@ -21,21 +21,19 @@ export async function generateMonorepo(config: GeneratorConfig): Promise<void> {
   logStep(`Creating monorepo at ${projectPath}`);
   await createDirectory(projectPath);
 
-  const appsPath = `${projectPath}/apps`;
-  const packagesPath = `${projectPath}/packages`;
-  await createDirectory(appsPath);
-  await createDirectory(packagesPath);
+  const backendPath = `${projectPath}/${capitalize(config.projectName)}_Backend`;
+  const frontendPath = `${projectPath}/${capitalize(config.projectName)}_Frontend`;
+  const docsPath = `${projectPath}/Docs`;
 
-  await generateRootPackageJson(projectPath, config);
-  await generateWorkspaceConfig(projectPath, config);
-  await generateSharedTsConfig(projectPath);
-  await generateSharedEslintConfig(projectPath, config);
-  await generateSharedPrettierConfig(projectPath, config);
+  await createDirectory(backendPath);
+  await createDirectory(frontendPath);
+  await createDirectory(docsPath);
+
   await generateGitIgnore(projectPath);
   await generateReadme(projectPath, config);
-
-  const backendPath = `${appsPath}/backend`;
-  await createDirectory(backendPath);
+  await generateAgentsMd(projectPath, config);
+  await generateLicense(projectPath, config);
+  await generateEnvExample(projectPath);
 
   switch (config.backend.framework) {
     case "elysia":
@@ -45,9 +43,6 @@ export async function generateMonorepo(config: GeneratorConfig): Promise<void> {
       await generateFastAPIBackend(backendPath, config);
       break;
   }
-
-  const frontendPath = `${appsPath}/frontend`;
-  await createDirectory(frontendPath);
 
   switch (config.frontend.framework) {
     case "astro":
@@ -61,174 +56,31 @@ export async function generateMonorepo(config: GeneratorConfig): Promise<void> {
       break;
   }
 
-  await createDirectory(`${packagesPath}/shared`);
-  await generateSharedPackage(`${packagesPath}/shared`, config);
+  await createDirectory(`${docsPath}/Feature`);
+  await createDirectory(`${docsPath}/DatabaseSetup`);
+  await generateDocsReadme(docsPath);
 
-  logSuccess("Backend created at apps/backend");
-  logSuccess("Frontend created at apps/frontend");
-  logSuccess("Shared packages configured");
-  logSuccess("Workspace configured");
+  const backendName = `${capitalize(config.projectName)}_Backend`;
+  const frontendName = `${capitalize(config.projectName)}_Frontend`;
+
+  logSuccess(`Backend created at ${backendName}`);
+  logSuccess(`Frontend created at ${frontendName}`);
+  logSuccess("Docs folder created");
 
   if (config.git) {
     await initializeGit(projectPath);
-  }
-
-  if (config.install) {
-    await installDependencies(projectPath, config.frontend.packageManager);
   }
 
   logInfo("\n📦 Next steps:");
   logInfo(`  cd ${config.projectName}`);
   logInfo(`  # Backend`);
   logInfo(
-    `  cd apps/backend && ${config.backend.packageManager} install && ${config.backend.packageManager} run dev`
+    `  cd ${backendName} && ${config.backend.packageManager} install && ${config.backend.packageManager} run dev`
   );
   logInfo(`  # Frontend`);
   logInfo(
-    `  cd apps/frontend && ${config.frontend.packageManager} install && ${config.frontend.packageManager} run dev`
+    `  cd ${frontendName} && ${config.frontend.packageManager} install && ${config.frontend.packageManager} run dev`
   );
-}
-
-async function generateRootPackageJson(
-  projectPath: string,
-  config: GeneratorConfig
-): Promise<void> {
-  const packageManager = config.frontend.packageManager;
-
-  const content = JSON.stringify(
-    {
-      name: config.projectName,
-      version: "0.1.0",
-      private: true,
-      type: "module",
-      scripts: {
-        dev: `${packageManager} run --filter "apps/*" dev`,
-        build: `${packageManager} run --filter "apps/*" build`,
-        lint: `${packageManager} run --filter "*" lint`,
-        format: 'prettier --write "**/*.{js,jsx,ts,tsx,json,css,md}"',
-      },
-      workspaces: ["apps/*", "packages/*"],
-      devDependencies: {
-        ...(config.backend.eslint || config.frontend.eslint
-          ? {
-              eslint: "^8.57.0",
-              "@typescript-eslint/parser": "^7.0.0",
-              "@typescript-eslint/eslint-plugin": "^7.0.0",
-            }
-          : {}),
-        ...(config.backend.prettier || config.frontend.prettier ? { prettier: "^3.2.0" } : {}),
-        ...(config.backend.typescript || config.frontend.typescript
-          ? { typescript: "^5.3.0" }
-          : {}),
-      },
-    },
-    null,
-    2
-  );
-
-  await writeFile(`${projectPath}/package.json`, content);
-  logSuccess("Root package.json created");
-}
-
-async function generateWorkspaceConfig(
-  projectPath: string,
-  config: GeneratorConfig
-): Promise<void> {
-  let content = "";
-
-  switch (config.frontend.packageManager) {
-    case "pnpm":
-      content = `packages:\n  - 'apps/*'\n  - 'packages/*'\n`;
-      await writeFile(`${projectPath}/pnpm-workspace.yaml`, content);
-      break;
-    case "yarn":
-      content = JSON.stringify({ workspaces: ["apps/*", "packages/*"] }, null, 2);
-      await writeFile(`${projectPath}/package.json`, content);
-      break;
-    case "npm":
-    case "bun":
-      await writeFile(`${projectPath}/.npmrc`, "workspaces=apps/* packages/*");
-      break;
-  }
-
-  logSuccess("Workspace configuration created");
-}
-
-async function generateSharedTsConfig(projectPath: string): Promise<void> {
-  const content = JSON.stringify(
-    {
-      compilerOptions: {
-        target: "ES2022",
-        module: "ES2022",
-        lib: ["ES2022"],
-        moduleResolution: "bundler",
-        strict: true,
-        esModuleInterop: true,
-        skipLibCheck: true,
-        forceConsistentCasingInFileNames: true,
-        resolveJsonModule: true,
-        declaration: true,
-        declarationMap: true,
-        sourceMap: true,
-        composite: true,
-      },
-      references: [
-        { path: "./apps/backend" },
-        { path: "./apps/frontend" },
-        { path: "./packages/shared" },
-      ],
-    },
-    null,
-    2
-  );
-
-  await writeFile(`${projectPath}/tsconfig.json`, content);
-  logSuccess("Shared TypeScript configuration created");
-}
-
-async function generateSharedEslintConfig(
-  projectPath: string,
-  config: GeneratorConfig
-): Promise<void> {
-  if (!config.backend.eslint && !config.frontend.eslint) return;
-
-  const content = `module.exports = {
-  root: true,
-  extends: ['eslint:recommended'],
-  env: {
-    node: true,
-    es2022: true,
-  },
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-  },
-};`;
-
-  await writeFile(`${projectPath}/.eslintrc.js`, content);
-  logSuccess("Shared ESLint configuration created");
-}
-
-async function generateSharedPrettierConfig(
-  projectPath: string,
-  config: GeneratorConfig
-): Promise<void> {
-  if (!config.backend.prettier && !config.frontend.prettier) return;
-
-  const content = JSON.stringify(
-    {
-      semi: false,
-      singleQuote: true,
-      tabWidth: 2,
-      trailingComma: "es5",
-      printWidth: 80,
-    },
-    null,
-    2
-  );
-
-  await writeFile(`${projectPath}/.prettierrc`, content);
-  logSuccess("Shared Prettier configuration created");
 }
 
 async function generateGitIgnore(projectPath: string): Promise<void> {
@@ -284,6 +136,9 @@ yarn-error.log*
 }
 
 async function generateReadme(projectPath: string, config: GeneratorConfig): Promise<void> {
+  const backendName = `${capitalize(config.projectName)}_Backend`;
+  const frontendName = `${capitalize(config.projectName)}_Frontend`;
+
   const content = `# ${config.projectName}
 
 This project was generated by [Phos](https://github.com/yourusername/phos).
@@ -292,12 +147,12 @@ This project was generated by [Phos](https://github.com/yourusername/phos).
 
 \`\`\`
 .
-├── apps/
-│   ├── backend/     # ${config.backend.framework} backend
-│   └── frontend/    # ${config.frontend.framework} frontend
-├── packages/
-│   └── shared/      # Shared utilities and types
-└── package.json     # Root package.json with workspace config
+├── ${backendName}/     # ${config.backend.framework} backend
+├── ${frontendName}/    # ${config.frontend.framework} frontend
+├── Docs/               # Documentation
+├── AGENTS.md           # Agent guidelines
+├── LICENSE             # License file
+└── env.example         # Environment variables template
 \`\`\`
 
 ## Getting Started
@@ -305,7 +160,7 @@ This project was generated by [Phos](https://github.com/yourusername/phos).
 ### Backend
 
 \`\`\`bash
-cd apps/backend
+cd ${backendName}
 ${config.backend.packageManager} install
 ${config.backend.packageManager} run dev
 \`\`\`
@@ -313,7 +168,7 @@ ${config.backend.packageManager} run dev
 ### Frontend
 
 \`\`\`bash
-cd apps/frontend
+cd ${frontendName}
 ${config.frontend.packageManager} install
 ${config.frontend.packageManager} run dev
 \`\`\`
@@ -349,55 +204,206 @@ ${config.frontend.packageManager} run dev
   logSuccess("README.md created");
 }
 
-async function generateSharedPackage(packagePath: string, config: GeneratorConfig): Promise<void> {
-  const content = JSON.stringify(
-    {
-      name: "@phos/shared",
-      version: "0.1.0",
-      type: "module",
-      main: "./dist/index.js",
-      types: "./dist/index.d.ts",
-      exports: {
-        ".": {
-          types: "./dist/index.d.ts",
-          import: "./dist/index.js",
-        },
-      },
-      scripts: {
-        build: "tsc",
-        dev: "tsc --watch",
-      },
-      devDependencies: {
-        typescript: "^5.3.0",
-      },
-    },
-    null,
-    2
-  );
+async function generateAgentsMd(projectPath: string, config: GeneratorConfig): Promise<void> {
+  const projectName = config.projectName;
+  const capitalizedProjectName = capitalize(config.projectName);
+  const backendName = `${capitalizedProjectName}_Backend`;
+  const frontendName = `${capitalizedProjectName}_Frontend`;
 
-  await writeFile(`${packagePath}/package.json`, content);
+  const content = `# AGENTS Guidelines for This Repository
 
-  const tsConfigContent = JSON.stringify(
-    {
-      extends: "../../tsconfig.json",
-      compilerOptions: {
-        composite: true,
-        outDir: "./dist",
-        rootDir: "./src",
-      },
-      include: ["src/**/*"],
-    },
-    null,
-    2
-  );
+## Project Name: ${projectName}
 
-  await writeFile(`${packagePath}/tsconfig.json`, tsConfigContent);
+This project was generated by [Phos](https://github.com/yourusername/phos).
 
-  await createDirectory(`${packagePath}/src`);
-  await writeFile(
-    `${packagePath}/src/index.ts`,
-    `export function hello(name: string): string {\n  return \`Hello, \${name}!\`;\n}\n`
-  );
+### Core Features:
 
-  logSuccess("Shared package created");
+1. **${config.frontend.framework} Frontend** - Modern web framework
+2. **${config.backend.framework} Backend** - Server-side application
+3. **Monorepo Structure** - Organized workspace with separate backend and frontend
+
+### Technology Stack:
+
+- **Frontend**: ${config.frontend.framework}
+- **Backend**: ${config.backend.framework}
+- **Package Manager**: ${config.frontend.packageManager}
+- **TypeScript**: ${config.frontend.typescript ? "Enabled" : "Disabled"}
+- **ESLint**: ${config.frontend.eslint ? "Enabled" : "Disabled"}
+- **Prettier**: ${config.frontend.prettier ? "Enabled" : "Disabled"}
+- **CSS Framework**: ${config.frontend.cssFramework}
+
+## 1. Development Workflow
+
+### Project Structure
+
+\`\`\`
+${projectName}/
+├── ${backendName}/    # Backend application
+├── ${frontendName}/   # Frontend application
+├── Docs/                             # Documentation
+├── AGENTS.md                         # This file
+├── LICENSE                           # License
+├── README.md                         # Project README
+└── env.example                       # Environment variables template
+\`\`\`
+
+### Running the Project
+
+#### Backend
+\`\`\`bash
+cd ${backendName}
+${config.backend.packageManager} install
+${config.backend.packageManager} run dev
+\`\`\`
+
+#### Frontend
+\`\`\`bash
+cd ${frontendName}
+${config.frontend.packageManager} install
+${config.frontend.packageManager} run dev
+\`\`\`
+
+## 2. Architecture
+
+### Backend
+- Framework: ${config.backend.framework}
+- Language: ${config.backend.framework === "fastapi" ? "Python" : "TypeScript"}
+- Package Manager: ${config.backend.packageManager}
+
+### Frontend
+- Framework: ${config.frontend.framework}
+- Language: JavaScript/TypeScript
+- Package Manager: ${config.frontend.packageManager}
+- CSS Framework: ${config.frontend.cssFramework}
+- UI Components: ${config.frontend.uiComponents}
+
+## 3. Coding Conventions
+
+### ${config.frontend.framework}
+
+${
+  config.frontend.framework === "astro"
+    ? `
+- Use Astro component syntax
+- Follow Astro best practices
+- Use TypeScript if enabled
+`
+    : config.frontend.framework === "svelte"
+      ? `
+- Use Svelte component syntax
+- Follow Svelte best practices
+- Use TypeScript if enabled
+`
+      : `
+- Use Next.js conventions
+- Use App Router for new features
+- Use TypeScript if enabled
+`
+}
+
+### ${config.backend.framework}
+
+${
+  config.backend.framework === "elysia"
+    ? `
+- Use Elysia patterns
+- Follow Bun conventions
+- Use TypeScript if enabled
+`
+    : `
+- Use FastAPI patterns
+- Follow Python PEP 8 guidelines
+- Use type hints
+`
+}
+
+## 4. Available Scripts
+
+### Root Level
+- \`${config.frontend.packageManager} run dev\` - Start both dev servers
+- \`${config.frontend.packageManager} run build\` - Build both apps
+- \`${config.frontend.packageManager} run lint\` - Run ESLint
+- \`${config.frontend.packageManager} run format\` - Format code
+
+## 5. Documentation
+
+Check the \`Docs/\` folder for:
+- Feature documentation
+- Database setup scripts
+- Schema documentation
+- SQL queries
+`;
+
+  await writeFile(`${projectPath}/AGENTS.md`, content);
+  logSuccess("AGENTS.md created");
+}
+
+async function generateLicense(projectPath: string, config: GeneratorConfig): Promise<void> {
+  const content = `MIT License
+
+Copyright (c) ${new Date().getFullYear()} ${config.projectName}
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+`;
+
+  await writeFile(`${projectPath}/LICENSE`, content);
+  logSuccess("LICENSE created");
+}
+
+async function generateEnvExample(projectPath: string): Promise<void> {
+  const content = `# Environment Variables Template
+# Copy this file to .env and fill in the actual values
+
+# Backend
+BACKEND_PORT=3000
+BACKEND_HOST=localhost
+
+# Database
+DATABASE_URL=postgresql://user:password@localhost:5432/database
+
+# API Keys
+API_KEY=your_api_key_here
+
+# Frontend
+VITE_API_URL=http://localhost:3000
+`;
+
+  await writeFile(`${projectPath}/env.example`, content);
+  logSuccess("env.example created");
+}
+
+async function generateDocsReadme(docsPath: string): Promise<void> {
+  const content = `# Documentation
+
+This folder contains project documentation.
+
+## Structure
+
+- \`Feature/\` - Feature documentation
+- \`DatabaseSetup/\` - Database setup scripts and migrations
+
+## Adding Documentation
+
+Add new feature documentation in the \`Feature/\` folder.
+Add database scripts in the \`DatabaseSetup/\` folder.
+`;
+
+  await writeFile(`${docsPath}/README.md`, content);
+  logSuccess("Docs README created");
 }
