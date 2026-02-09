@@ -1,0 +1,36 @@
+{
+  "name": "phos",
+  "version": "0.1.0",
+  "description": "Full-stack interactive project generator CLI - Phos",
+  "type": "module",
+  "bin": {
+    "phos": "./dist/cli.js"
+  },
+  "scripts": {
+    "start": "node dist/cli.js",
+    "dev": "tsx src/cli.ts",
+    "build": "tsc"
+  },
+  "keywords": [
+    "cli",
+    "generator",
+    "scaffold",
+    "create",
+    "phos"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@clack/prompts": "^1.0.0",
+    "commander": "^14.0.2",
+    "fs-extra": "^11.3.3",
+    "handlebars": "^4.7.8",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.11.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
