@@ -1,6 +1,6 @@
 {
   "name": "phos",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Full-stack interactive project generator CLI - Phos",
   "type": "module",
   "bin": {
@@ -40,6 +40,10 @@
     "url": "git+https://github.com/DotJumpDot/Phos.git"
   },
   "types": "./dist/cli.d.ts",
+  "files": [
+    "dist",
+    "src/templates"
+  ],
   "bugs": {
     "url": "https://github.com/DotJumpDot/Phos/issues"
   },

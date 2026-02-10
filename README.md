@@ -10,7 +10,7 @@ Full-stack interactive project generator CLI
 [![Node.js Version](https://img.shields.io/node/v/phos)](https://nodejs.org)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
-**Version 1.0.1 - Production Release** 🎉
+**Version 1.0.3 - Production Release** 🎉
 
 [View on npmjs.com](https://www.npmjs.com/package/phos)
 
@@ -278,6 +278,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 Phos follows [semantic versioning](https://semver.org/).
 
+- **1.0.3** - Patch release (template path fix)
+- **1.0.2** - Patch release (template missing fix)
 - **1.0.1** - Patch release (bug fixes)
 - **1.0.0** - Production release with full feature support
 - **1.x.0** - Minor releases (new features, non-breaking changes)

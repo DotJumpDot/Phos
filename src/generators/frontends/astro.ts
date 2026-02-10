@@ -2,9 +2,9 @@ import {
   createDirectory,
   logSuccess,
   copyTemplate,
+  getTemplatePath,
   type GeneratorConfig,
 } from "@/utils/helpers.js";
-import { resolve } from "path";
 import fs from "fs-extra";
 
 async function removeFileIfExists(filePath: string): Promise<void> {
@@ -22,7 +22,7 @@ export async function generateAstroFrontend(
   const srcPath = `${projectPath}/src`;
   await createDirectory(srcPath);
 
-  const templatePath = resolve(process.cwd(), "src/templates/frontend/astro");
+  const templatePath = getTemplatePath("frontend/astro");
   await copyTemplate(templatePath, projectPath, config as unknown as Record<string, unknown>);
 
   if (!config.frontend?.eslint) {

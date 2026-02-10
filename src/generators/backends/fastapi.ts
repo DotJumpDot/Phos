@@ -7,8 +7,8 @@ import {
   type GeneratorConfig,
   getPackageManagerInstallCmd,
   getPackageManagerRunCmd,
+  getTemplatePath,
 } from "@/utils/helpers.js";
-import { resolve } from "path";
 import fs from "fs-extra";
 
 async function removeFileIfExists(filePath: string): Promise<void> {
@@ -31,7 +31,7 @@ export async function generateFastAPIBackend(
   const srcPath = `${projectPath}/src`;
   await createDirectory(srcPath);
 
-  const templatePath = resolve(process.cwd(), "src/templates/backend/fastapi");
+  const templatePath = getTemplatePath("backend/fastapi");
   const backendName = `${capitalize(config.projectName)}_Backend`;
 
   const templateData = {

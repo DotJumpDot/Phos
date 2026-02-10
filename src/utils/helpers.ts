@@ -2,7 +2,17 @@ import fs from "fs-extra";
 import Handlebars from "handlebars";
 import pc from "picocolors";
 import { execSync } from "child_process";
-import { resolve, join } from "path";
+import { resolve, join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+export function getTemplatePath(relativeTemplatePath: string): string {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+  // Phos/src/utils/helpers.ts -> Phos/
+  // Phos/dist/utils/helpers.js -> Phos/
+  const root = resolve(__dirname, "../../");
+  return resolve(root, "src/templates", relativeTemplatePath);
+}
 
 Handlebars.registerHelper("eq", function (a, b) {
   return a === b;

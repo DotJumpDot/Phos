@@ -4,6 +4,19 @@ All notable changes to Phos CLI will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.3] - 2026-02-10
+
+### Fixed
+
+- **Template Path Resolution**: Fixed issue where generators were looking for templates relative to the current working directory instead of the package installation directory.
+- **npx Support**: Improved support for running via `npx` by using absolute paths relative to the package root for template resolution.
+
+## [1.0.2] - 2026-02-10
+
+### Fixed
+
+- **Template Inclusion**: Fixed missing template files in the published npm package by adding `src/templates` to the `files` field in `package.json`.
+
 ## [1.0.1] - 2026-02-10
 
 ### Fixed

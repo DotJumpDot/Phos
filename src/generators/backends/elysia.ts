@@ -4,8 +4,8 @@ import {
   copyTemplate,
   type GeneratorConfig,
   capitalize,
+  getTemplatePath,
 } from "@/utils/helpers.js";
-import { resolve } from "path";
 import fs from "fs-extra";
 
 async function removeFileIfExists(filePath: string): Promise<void> {
@@ -23,7 +23,7 @@ export async function generateElysiaBackend(
   const srcPath = `${projectPath}/src`;
   await createDirectory(srcPath);
 
-  const templatePath = resolve(process.cwd(), "src/templates/backend/elysia");
+  const templatePath = getTemplatePath("backend/elysia");
   const backendName = `${capitalize(config.projectName)}_Backend`;
 
   const templateData = {
