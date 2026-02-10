@@ -271,12 +271,19 @@ program
                   { value: "venv", label: "venv (virtual environment)" },
                   { value: "pip", label: "pip (system)" },
                 ]
-              : [
-                  { value: "npm", label: "npm" },
-                  { value: "yarn", label: "yarn" },
-                  { value: "pnpm", label: "pnpm" },
-                  { value: "bun", label: "bun" },
-                ],
+              : selectedFramework === "elysia"
+                ? [
+                    { value: "bun", label: "bun" },
+                    { value: "npm", label: "npm" },
+                    { value: "yarn", label: "yarn" },
+                    { value: "pnpm", label: "pnpm" },
+                  ]
+                : [
+                    { value: "npm", label: "npm" },
+                    { value: "yarn", label: "yarn" },
+                    { value: "pnpm", label: "pnpm" },
+                    { value: "bun", label: "bun" },
+                  ],
         })) as "npm" | "yarn" | "pnpm" | "bun" | "venv" | "pip";
 
         if (typeof packageManager !== "string") {
