@@ -25,11 +25,11 @@ export async function generateSvelteFrontend(
   const templatePath = resolve(process.cwd(), "src/templates/frontend/svelte");
   await copyTemplate(templatePath, projectPath, config as unknown as Record<string, unknown>);
 
-  if (!config.frontend.eslint) {
+  if (!config.frontend?.eslint) {
     await removeFileIfExists(`${projectPath}/eslint.config.js`);
   }
 
-  if (!config.frontend.prettier) {
+  if (!config.frontend?.prettier) {
     await removeFileIfExists(`${projectPath}/.prettierrc`);
     await removeFileIfExists(`${projectPath}/.prettierignore`);
   }

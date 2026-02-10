@@ -25,11 +25,11 @@ export async function generateNextJSFrontend(
   const templatePath = resolve(process.cwd(), "src/templates/frontend/nextjs");
   await copyTemplate(templatePath, projectPath, config as unknown as Record<string, unknown>);
 
-  if (!config.frontend.eslint) {
+  if (!config.frontend?.eslint) {
     await removeFileIfExists(`${projectPath}/eslint.config.mjs`);
   }
 
-  if (!config.frontend.prettier) {
+  if (!config.frontend?.prettier) {
     await removeFileIfExists(`${projectPath}/.prettierrc`);
   }
 

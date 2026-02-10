@@ -25,11 +25,11 @@ export async function generateAstroFrontend(
   const templatePath = resolve(process.cwd(), "src/templates/frontend/astro");
   await copyTemplate(templatePath, projectPath, config as unknown as Record<string, unknown>);
 
-  if (!config.frontend.eslint) {
+  if (!config.frontend?.eslint) {
     await removeFileIfExists(`${projectPath}/eslint.config.js`);
   }
 
-  if (!config.frontend.prettier) {
+  if (!config.frontend?.prettier) {
     await removeFileIfExists(`${projectPath}/.prettierrc`);
   }
 
