@@ -1,12 +1,8 @@
 import {
   createDirectory,
-  logSuccess,
-  logInfo,
   copyTemplate,
   capitalize,
   type GeneratorConfig,
-  getPackageManagerInstallCmd,
-  getPackageManagerRunCmd,
   getTemplatePath,
 } from "@/utils/helpers.js";
 import fs from "fs-extra";
@@ -52,20 +48,5 @@ export async function generateFastAPIBackend(
     );
   } else {
     await removeFileIfExists(`${projectPath}/pyproject_prettier.toml`);
-  }
-
-  const installCmd = getPackageManagerInstallCmd(config.backend?.packageManager || "pip");
-  const runCmd = getPackageManagerRunCmd(config.backend?.packageManager || "pip", "dev");
-
-  logSuccess(`FastAPI backend generated`);
-  logInfo("");
-  logInfo(`📦 Next steps:`);
-  logInfo(`  cd ${backendName}`);
-  if (config.backend?.packageManager === "venv") {
-    logInfo(`  chmod +x setup.sh`);
-    logInfo(`  ./setup.sh`);
-  } else {
-    logInfo(`  ${installCmd}`);
-    logInfo(`  ${runCmd}`);
   }
 }

@@ -178,14 +178,12 @@ export async function installDependencies(
 
 export async function initializeGit(projectPath: string): Promise<void> {
   try {
-    logStep("Initializing Git repository...");
     execSync("git init", { cwd: projectPath, stdio: "inherit" });
     execSync("git add .", { cwd: projectPath, stdio: "inherit" });
     execSync('git commit -m "Initial commit from Phos"', {
       cwd: projectPath,
       stdio: "inherit",
     });
-    logSuccess("Git repository initialized");
   } catch (error) {
     throw new Error(`Failed to initialize Git: ${error}`);
   }

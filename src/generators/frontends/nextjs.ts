@@ -1,6 +1,5 @@
 import {
   createDirectory,
-  logSuccess,
   copyTemplate,
   getTemplatePath,
   type GeneratorConfig,
@@ -32,6 +31,4 @@ export async function generateNextJSFrontend(
   if (!config.frontend?.prettier) {
     await removeFileIfExists(`${projectPath}/.prettierrc`);
   }
-
-  logSuccess(`Next.js frontend generated`);
 }

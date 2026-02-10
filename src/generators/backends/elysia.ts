@@ -1,6 +1,5 @@
 import {
   createDirectory,
-  logSuccess,
   copyTemplate,
   type GeneratorConfig,
   capitalize,
@@ -40,6 +39,4 @@ export async function generateElysiaBackend(
   if (!config.backend?.prettier) {
     await removeFileIfExists(`${projectPath}/.prettierrc`);
   }
-
-  logSuccess(`Elysia backend generated`);
 }

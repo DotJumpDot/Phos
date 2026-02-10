@@ -2,8 +2,6 @@ import {
   createDirectory,
   writeFile,
   getProjectPath,
-  logStep,
-  logSuccess,
   logInfo,
   initializeGit,
   type GeneratorConfig,
@@ -14,16 +12,20 @@ import { generateFastAPIBackend } from "@/generators/backends/fastapi.js";
 import { generateAstroFrontend } from "@/generators/frontends/astro.js";
 import { generateSvelteFrontend } from "@/generators/frontends/svelte.js";
 import { generateNextJSFrontend } from "@/generators/frontends/nextjs.js";
+import { spinner } from "@clack/prompts";
 
 export async function generateSingle(config: GeneratorConfig): Promise<void> {
   const projectPath = getProjectPath(config.projectName);
+  const s = spinner();
 
-  logStep(`Creating single project at ${projectPath}`);
+  s.start(`Creating single project structure at ${projectPath}...`);
   await createDirectory(projectPath);
 
+  s.message(`Creating Docs folder...`);
   const docsPath = `${projectPath}/Docs`;
   await createDirectory(docsPath);
 
+  s.message(`Generating configuration files...`);
   await generateGitIgnore(projectPath);
   await generateReadme(projectPath, config);
   await generateAgentsMd(projectPath, config);
@@ -31,6 +33,7 @@ export async function generateSingle(config: GeneratorConfig): Promise<void> {
   await generateEnvExample(projectPath);
 
   if (config.backend?.framework) {
+    s.message(`Generating ${capitalize(config.backend.framework)} backend...`);
     await createDirectory(`${projectPath}/src`);
     switch (config.backend.framework) {
       case "elysia":
@@ -40,7 +43,10 @@ export async function generateSingle(config: GeneratorConfig): Promise<void> {
         await generateFastAPIBackend(projectPath, config);
         break;
     }
+    s.stop(`✨ ${capitalize(config.backend.framework)} backend generated`);
+    s.start();
   } else if (config.frontend?.framework) {
+    s.message(`Generating ${capitalize(config.frontend.framework)} frontend...`);
     await createDirectory(`${projectPath}/src`);
     switch (config.frontend.framework) {
       case "astro":
@@ -53,14 +59,16 @@ export async function generateSingle(config: GeneratorConfig): Promise<void> {
         await generateNextJSFrontend(projectPath, config);
         break;
     }
+    s.stop(`✨ ${capitalize(config.frontend.framework)} frontend generated`);
+    s.start();
   }
 
+  s.message(`Creating documentation structure...`);
   await createDirectory(`${docsPath}/Feature`);
   await createDirectory(`${docsPath}/DatabaseSetup`);
   await generateSchemaDocs(docsPath, config);
 
-  logSuccess(`Project created at ${config.projectName}`);
-  logSuccess("Docs folder created");
+  s.stop(`✨ Project created at ${config.projectName}`);
 
   if (config.git) {
     await initializeGit(projectPath);
@@ -160,7 +168,6 @@ build/
 `;
 
   await writeFile(`${projectPath}/.gitignore`, content);
-  logSuccess(".gitignore created");
 }
 
 async function generateReadme(projectPath: string, config: GeneratorConfig): Promise<void> {
@@ -213,7 +220,6 @@ ${config.frontend!.packageManager} run dev
   }
 
   await writeFile(`${projectPath}/README.md`, content);
-  logSuccess("README.md created");
 }
 
 async function generateAgentsMd(projectPath: string, config: GeneratorConfig): Promise<void> {
@@ -273,7 +279,6 @@ ${projectName}/
 `;
 
   await writeFile(`${projectPath}/AGENTS.md`, content);
-  logSuccess("AGENTS.md created");
 }
 
 async function generateLicense(projectPath: string, config: GeneratorConfig): Promise<void> {
@@ -302,7 +307,6 @@ DEALINGS IN THE SOFTWARE.
 `;
 
   await writeFile(`${projectPath}/LICENSE`, content);
-  logSuccess("LICENSE created");
 }
 
 async function generateEnvExample(projectPath: string): Promise<void> {
@@ -329,7 +333,6 @@ X_API_KEY=1234
 `;
 
   await writeFile(`${projectPath}/env.example`, content);
-  logSuccess("env.example created");
 }
 
 async function generateSchemaDocs(docsPath: string, config: GeneratorConfig): Promise<void> {
@@ -461,5 +464,4 @@ When deploying to production:
 `;
 
   await writeFile(`${docsPath}/Schema.md`, content);
-  logSuccess("Schema.md created");
 }

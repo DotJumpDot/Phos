@@ -2,8 +2,6 @@ import {
   createDirectory,
   writeFile,
   getProjectPath,
-  logStep,
-  logSuccess,
   logInfo,
   initializeGit,
   capitalize,
@@ -16,13 +14,16 @@ import { generateFastAPIBackend } from "@/generators/backends/fastapi.js";
 import { generateAstroFrontend } from "@/generators/frontends/astro.js";
 import { generateSvelteFrontend } from "@/generators/frontends/svelte.js";
 import { generateNextJSFrontend } from "@/generators/frontends/nextjs.js";
+import { spinner } from "@clack/prompts";
 
 export async function generateMonorepo(config: GeneratorConfig): Promise<void> {
   const projectPath = getProjectPath(config.projectName);
+  const s = spinner();
 
-  logStep(`Creating monorepo at ${projectPath}`);
+  s.start(`Creating monorepo structure at ${projectPath}...`);
   await createDirectory(projectPath);
 
+  s.message(`Creating workspace directories...`);
   const backendPath = `${projectPath}/${capitalize(config.projectName)}_Backend`;
   const frontendPath = `${projectPath}/${capitalize(config.projectName)}_Frontend`;
   const docsPath = `${projectPath}/Docs`;
@@ -31,33 +32,45 @@ export async function generateMonorepo(config: GeneratorConfig): Promise<void> {
   await createDirectory(frontendPath);
   await createDirectory(docsPath);
 
+  s.message(`Generating configuration files...`);
   await generateGitIgnore(projectPath);
   await generateReadme(projectPath, config);
   await generateAgentsMd(projectPath, config);
   await generateLicense(projectPath, config);
   await generateEnvExample(projectPath);
 
-  switch (config.backend?.framework) {
-    case "elysia":
-      await generateElysiaBackend(backendPath, config);
-      break;
-    case "fastapi":
-      await generateFastAPIBackend(backendPath, config);
-      break;
+  if (config.backend) {
+    s.message(`Generating ${capitalize(config.backend.framework)} backend...`);
+    switch (config.backend.framework) {
+      case "elysia":
+        await generateElysiaBackend(backendPath, config);
+        break;
+      case "fastapi":
+        await generateFastAPIBackend(backendPath, config);
+        break;
+    }
+    s.stop(`✨ ${capitalize(config.backend.framework)} backend generated`);
+    s.start();
   }
 
-  switch (config.frontend?.framework) {
-    case "astro":
-      await generateAstroFrontend(frontendPath, config);
-      break;
-    case "svelte":
-      await generateSvelteFrontend(frontendPath, config);
-      break;
-    case "nextjs":
-      await generateNextJSFrontend(frontendPath, config);
-      break;
+  if (config.frontend) {
+    s.message(`Generating ${capitalize(config.frontend.framework)} frontend...`);
+    switch (config.frontend.framework) {
+      case "astro":
+        await generateAstroFrontend(frontendPath, config);
+        break;
+      case "svelte":
+        await generateSvelteFrontend(frontendPath, config);
+        break;
+      case "nextjs":
+        await generateNextJSFrontend(frontendPath, config);
+        break;
+    }
+    s.stop(`✨ ${capitalize(config.frontend.framework)} frontend generated`);
+    s.start();
   }
 
+  s.message(`Creating documentation structure...`);
   await createDirectory(`${docsPath}/Feature`);
   await createDirectory(`${docsPath}/DatabaseSetup`);
   await generateSchemaDocs(docsPath, config);
@@ -65,9 +78,7 @@ export async function generateMonorepo(config: GeneratorConfig): Promise<void> {
   const backendName = `${capitalize(config.projectName)}_Backend`;
   const frontendName = `${capitalize(config.projectName)}_Frontend`;
 
-  logSuccess(`Backend created at ${backendName}`);
-  logSuccess(`Frontend created at ${frontendName}`);
-  logSuccess("Docs folder created");
+  s.stop(`✨ Monorepo created at ${config.projectName}`);
 
   if (config.git) {
     await initializeGit(projectPath);
@@ -135,7 +146,6 @@ yarn-error.log*
 `;
 
   await writeFile(`${projectPath}/.gitignore`, content);
-  logSuccess(".gitignore created");
 }
 
 async function generateReadme(projectPath: string, config: GeneratorConfig): Promise<void> {
@@ -204,7 +214,6 @@ ${config.frontend?.packageManager} run dev
 `;
 
   await writeFile(`${projectPath}/README.md`, content);
-  logSuccess("README.md created");
 }
 
 async function generateAgentsMd(projectPath: string, config: GeneratorConfig): Promise<void> {
@@ -338,7 +347,6 @@ Check the \`Docs/\` folder for:
 `;
 
   await writeFile(`${projectPath}/AGENTS.md`, content);
-  logSuccess("AGENTS.md created");
 }
 
 async function generateLicense(projectPath: string, config: GeneratorConfig): Promise<void> {
@@ -366,7 +374,6 @@ SOFTWARE.
 `;
 
   await writeFile(`${projectPath}/LICENSE`, content);
-  logSuccess("LICENSE created");
 }
 
 async function generateEnvExample(projectPath: string): Promise<void> {
@@ -393,7 +400,6 @@ X_API_KEY=1234
 `;
 
   await writeFile(`${projectPath}/env.example`, content);
-  logSuccess("env.example created");
 }
 
 async function generateSchemaDocs(docsPath: string, config: GeneratorConfig): Promise<void> {
@@ -525,5 +531,4 @@ When deploying to production:
 `;
 
   await writeFile(`${docsPath}/Schema.md`, content);
-  logSuccess("Schema.md created");
 }

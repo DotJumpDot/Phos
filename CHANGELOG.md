@@ -4,6 +4,16 @@ All notable changes to Phos CLI will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.0] - 2026-02-10
+
+### Changed
+
+- **CLI UX**: Improve UX with spinner and recommended package managers
+  - Replace verbose log messages with spinner for better user experience
+  - Add framework-specific recommended package managers in CLI prompts
+  - Remove redundant success logs from individual generator functions
+  - Update version to 1.1.0 in package.json and documentation
+
 ## [1.0.3] - 2026-02-10
 
 ### Fixed

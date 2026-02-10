@@ -58,6 +58,7 @@ program
     let frontendFramework: "astro" | "svelte" | "nextjs" | undefined;
     let selectedFramework: "elysia" | "fastapi" | "astro" | "svelte" | "nextjs" | undefined;
     let packageManager: "npm" | "yarn" | "pnpm" | "bun" | "venv" | "pip";
+    let frontendPackageManager;
     let useTypeScript: boolean;
     let addESLint: boolean;
     let addPrettier: boolean;
@@ -90,12 +91,19 @@ program
                 { value: "venv", label: "venv (virtual environment)" },
                 { value: "pip", label: "pip (system)" },
               ]
-            : [
-                { value: "npm", label: "npm" },
-                { value: "yarn", label: "yarn" },
-                { value: "pnpm", label: "pnpm" },
-                { value: "bun", label: "bun" },
-              ],
+            : backendFramework === "elysia"
+              ? [
+                  { value: "bun", label: "bun (Recommended)" },
+                  { value: "npm", label: "npm" },
+                  { value: "yarn", label: "yarn" },
+                  { value: "pnpm", label: "pnpm" },
+                ]
+              : [
+                  { value: "npm", label: "npm" },
+                  { value: "yarn", label: "yarn" },
+                  { value: "pnpm", label: "pnpm" },
+                  { value: "bun", label: "bun" },
+                ],
       })) as "npm" | "yarn" | "pnpm" | "bun" | "venv" | "pip";
 
       if (typeof packageManager !== "string") {
@@ -153,14 +161,36 @@ program
         process.exit(0);
       }
 
-      const frontendPackageManager = await select({
+      frontendPackageManager = await select({
         message: "Select Frontend package manager",
-        options: [
-          { value: "npm", label: "npm" },
-          { value: "yarn", label: "yarn" },
-          { value: "pnpm", label: "pnpm" },
-          { value: "bun", label: "bun" },
-        ],
+        options:
+          frontendFramework === "astro"
+            ? [
+                { value: "npm", label: "npm (Recommended)" },
+                { value: "yarn", label: "yarn" },
+                { value: "pnpm", label: "pnpm" },
+                { value: "bun", label: "bun" },
+              ]
+            : frontendFramework === "svelte"
+              ? [
+                  { value: "pnpm", label: "pnpm (Recommended)" },
+                  { value: "npm", label: "npm" },
+                  { value: "yarn", label: "yarn" },
+                  { value: "bun", label: "bun" },
+                ]
+              : frontendFramework === "nextjs"
+                ? [
+                    { value: "yarn", label: "yarn (Recommended)" },
+                    { value: "npm", label: "npm" },
+                    { value: "pnpm", label: "pnpm" },
+                    { value: "bun", label: "bun" },
+                  ]
+                : [
+                    { value: "npm", label: "npm" },
+                    { value: "yarn", label: "yarn" },
+                    { value: "pnpm", label: "pnpm" },
+                    { value: "bun", label: "bun" },
+                  ],
       });
 
       if (typeof frontendPackageManager !== "string") {
@@ -273,7 +303,7 @@ program
                 ]
               : selectedFramework === "elysia"
                 ? [
-                    { value: "bun", label: "bun" },
+                    { value: "bun", label: "bun (Recommended)" },
                     { value: "npm", label: "npm" },
                     { value: "yarn", label: "yarn" },
                     { value: "pnpm", label: "pnpm" },
@@ -330,12 +360,34 @@ program
         frontendFramework = selectedFramework as "astro" | "svelte" | "nextjs";
         packageManager = (await select({
           message: "Select package manager",
-          options: [
-            { value: "npm", label: "npm" },
-            { value: "yarn", label: "yarn" },
-            { value: "pnpm", label: "pnpm" },
-            { value: "bun", label: "bun" },
-          ],
+          options:
+            selectedFramework === "astro"
+              ? [
+                  { value: "npm", label: "npm (Recommended)" },
+                  { value: "yarn", label: "yarn" },
+                  { value: "pnpm", label: "pnpm" },
+                  { value: "bun", label: "bun" },
+                ]
+              : selectedFramework === "svelte"
+                ? [
+                    { value: "pnpm", label: "pnpm (Recommended)" },
+                    { value: "npm", label: "npm" },
+                    { value: "yarn", label: "yarn" },
+                    { value: "bun", label: "bun" },
+                  ]
+                : selectedFramework === "nextjs"
+                  ? [
+                      { value: "yarn", label: "yarn (Recommended)" },
+                      { value: "npm", label: "npm" },
+                      { value: "pnpm", label: "pnpm" },
+                      { value: "bun", label: "bun" },
+                    ]
+                  : [
+                      { value: "npm", label: "npm" },
+                      { value: "yarn", label: "yarn" },
+                      { value: "pnpm", label: "pnpm" },
+                      { value: "bun", label: "bun" },
+                    ],
         })) as "npm" | "yarn" | "pnpm" | "bun";
 
         if (typeof packageManager !== "string") {
@@ -454,7 +506,7 @@ program
       frontend: frontendFramework
         ? {
             framework: frontendFramework,
-            packageManager: packageManager as "npm" | "yarn" | "pnpm" | "bun",
+            packageManager: frontendPackageManager as "npm" | "yarn" | "pnpm" | "bun",
             typescript: useTypeScript,
             eslint: addESLint,
             prettier: addPrettier,
@@ -474,7 +526,7 @@ program
         ? `${pc.cyan("Backend:")} ${backendFramework} (${packageManager})`
         : "",
       projectTypeTyped === "monorepo"
-        ? `${pc.cyan("Frontend:")} ${frontendFramework} (${packageManager})`
+        ? `${pc.cyan("Frontend:")} ${frontendFramework} (${frontendPackageManager})`
         : "",
       projectTypeTyped === "single"
         ? `${pc.cyan("Framework:")} ${selectedFramework} (${packageManager})`

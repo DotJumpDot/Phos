@@ -1,6 +1,5 @@
 import {
   createDirectory,
-  logSuccess,
   copyTemplate,
   getTemplatePath,
   type GeneratorConfig,
@@ -33,6 +32,4 @@ export async function generateSvelteFrontend(
     await removeFileIfExists(`${projectPath}/.prettierrc`);
     await removeFileIfExists(`${projectPath}/.prettierignore`);
   }
-
-  logSuccess(`Svelte frontend generated`);
 }
