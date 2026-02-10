@@ -4,6 +4,24 @@ All notable changes to Phos CLI will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.1] - 2026-02-10
+
+### Fixed
+
+- **Path Alias Resolution**: Fixed TypeScript path alias (`@/`) not being converted to relative paths during compilation
+- **Module Import Error**: Fixed `ERR_MODULE_NOT_FOUND` error when running published package via `npx phos create`
+- **Build Process**: Added `tsc-alias` package to properly convert path aliases to relative paths
+- **Template Compilation**: Excluded template files from TypeScript compilation to prevent missing dependency errors
+
+### Changed
+
+- **Build Script**: Updated build script to `tsc && tsc-alias` for proper path alias resolution
+- **tsconfig.json**: Added `src/templates/**/*` to exclude list to prevent template compilation errors
+
+### Dependencies
+
+- Added `tsc-alias: ^1.8.16` to devDependencies
+
 ## [1.0.0] - 2026-02-09
 
 ### Added

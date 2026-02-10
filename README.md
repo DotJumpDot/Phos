@@ -5,11 +5,14 @@
 Full-stack interactive project generator CLI
 
 [![npm version](https://badge.fury.io/js/phos.svg)](https://www.npmjs.com/package/phos)
+[![Downloads](https://img.shields.io/npm/dm/phos)](https://www.npmjs.com/package/phos)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/node/v/phos)](https://nodejs.org)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
-**Version 1.0.0 - Production Release** 🎉
+**Version 1.0.1 - Production Release** 🎉
+
+[View on npmjs.com](https://www.npmjs.com/package/phos)
 
 </div>
 
@@ -35,11 +38,52 @@ Phos is a powerful CLI tool that scaffolds modern full-stack web applications wi
 - 🎯 Single project mode for standalone applications
 - 📚 Comprehensive documentation auto-generation
 
+## Tech Stack
+
+### Core
+
+<div align="center">
+
+| Technology                                                                                                          | Description          | Version |
+| ------------------------------------------------------------------------------------------------------------------- | -------------------- | ------- |
+| ![Node.js](https://img.shields.io/badge/Node.js-20+-43853D?style=flat-square&logo=node.js&logoColor=white)          | Runtime Environment  | 20+     |
+| ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=flat-square&logo=typescript&logoColor=white) | Programming Language | 5.7+    |
+| ![Commander.js](https://img.shields.io/badge/Commander.js-14.0-000000?style=flat-square)                            | CLI Framework        | 14.0+   |
+| ![Clack](https://img.shields.io/badge/@clack/prompts-1.0-8B5CF6?style=flat-square)                                  | Interactive Prompts  | 1.0+    |
+| ![fs-extra](https://img.shields.io/badge/fs--extra-11.3-0288D1?style=flat-square)                                   | File Operations      | 11.3+   |
+| ![Handlebars](https://img.shields.io/badge/Handlebars-4.7-F0772E?style=flat-square)                                 | Template Engine      | 4.7+    |
+| ![Picocolors](https://img.shields.io/badge/Picocolors-1.1-E67E22?style=flat-square)                                 | Terminal Colors      | 1.1+    |
+
+</div>
+
+### Supported Frameworks
+
+#### Backend
+
+| Framework                                | Runtime | Description                        |
+| ---------------------------------------- | ------- | ---------------------------------- |
+| [Elysia](https://elysiajs.com/)          | Bun     | Fast and elegant Bun web framework |
+| [FastAPI](https://fastapi.tiangolo.com/) | Python  | Modern Python web framework        |
+
+#### Frontend
+
+| Framework                            | Description                            |
+| ------------------------------------ | -------------------------------------- |
+| [Astro](https://astro.build/)        | Modern static site generator           |
+| [SvelteKit](https://kit.svelte.dev/) | Full-stack Svelte framework            |
+| [Next.js](https://nextjs.org/)       | React framework with server components |
+
 ## Quick Start
 
-```bash
-bun create phos
-```
+<div align="center">
+
+### Choose Your Package Manager
+
+| npm               | yarn                   | bun                |
+| ----------------- | ---------------------- | ------------------ |
+| `npx phos create` | `yarn dlx phos create` | `bunx phos create` |
+
+</div>
 
 Follow the interactive prompts to configure your project, and Phos will generate a production-ready scaffold in seconds.
 
@@ -47,16 +91,25 @@ Follow the interactive prompts to configure your project, and Phos will generate
 
 ### From NPM
 
+<div align="center">
+
 ```bash
-bun create phos
-npm create phos
-yarn create phos
+npx phos create
+```
+
+</div>
+
+#### Alternative Package Managers
+
+```bash
+bunx phos create
+yarn dlx phos create
 ```
 
 ### Local Development
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/DotJumpDot/Phos.git
 cd phos
 bun install
 bun link
@@ -121,34 +174,6 @@ my-project/
 └── README.md             # Project documentation
 ```
 
-## Tech Stack
-
-### Core
-
-- **Runtime**: Node.js + TypeScript
-- **CLI Framework**: Commander.js
-- **Interactive Prompts**: @clack/prompts
-- **File Operations**: fs-extra
-- **Template Engine**: Handlebars
-- **Colors**: picocolors
-
-### Supported Frameworks
-
-#### Backend
-
-| Framework                                | Runtime | Description                        |
-| ---------------------------------------- | ------- | ---------------------------------- |
-| [Elysia](https://elysiajs.com/)          | Bun     | Fast and elegant Bun web framework |
-| [FastAPI](https://fastapi.tiangolo.com/) | Python  | Modern Python web framework        |
-
-#### Frontend
-
-| Framework                            | Description                            |
-| ------------------------------------ | -------------------------------------- |
-| [Astro](https://astro.build/)        | Modern static site generator           |
-| [SvelteKit](https://kit.svelte.dev/) | Full-stack Svelte framework            |
-| [Next.js](https://nextjs.org/)       | React framework with server components |
-
 ## Development
 
 ```bash
@@ -158,7 +183,7 @@ bun install
 # Run in development mode
 bun run dev create
 
-# Build the project
+# Build project
 bun run build
 
 # Run the built CLI
@@ -170,7 +195,7 @@ node dist/cli.js create
 ### Create a Monorepo with Elysia and Next.js
 
 ```bash
-phos create
+npx phos create
 # Project name: my-awesome-app
 # Project type: Monorepo
 # Backend Framework: Elysia
@@ -193,7 +218,7 @@ phos create
 ### Create a Single Astro Project
 
 ```bash
-phos create
+bunx phos create
 # Project name: my-astro-site
 # Project type: Single repo
 # Framework: Astro
@@ -243,7 +268,7 @@ phos create
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-1. Fork the repository
+1. Fork repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
@@ -253,8 +278,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 Phos follows [semantic versioning](https://semver.org/).
 
+- **1.0.1** - Patch release (bug fixes)
 - **1.0.0** - Production release with full feature support
-- **1.0.x** - Patch releases (bug fixes, documentation)
 - **1.x.0** - Minor releases (new features, non-breaking changes)
 - **x.0.0** - Major releases (breaking changes)
 
@@ -274,6 +299,6 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
 <div align="center">
 
-Made with ❤️ by the DotJumpDot
+Made with ❤️ by the Phos Team
 
 </div>
