@@ -51,7 +51,8 @@ src/
 │   ├── single.ts           # Single project generator
 │   ├── backends/
 │   │   ├── elysia.ts       # Elysia (Bun) backend generator
-│   │   └── fastapi.ts      # FastAPI (Python) backend generator
+│   │   ├── fastapi.ts      # FastAPI (Python) backend generator
+│   │   └── nestjs.ts      # NestJS (Node.js) backend generator
 │   └── frontends/
 │       ├── astro.ts        # Astro frontend generator
 │       ├── svelte.ts       # Svelte frontend generator
@@ -242,6 +243,6 @@ Phos CLI follows semantic versioning:
   - Complete rewrites
   - Production-ready releases
 
-**Current Version: 1.3.0** - Production Release
+**Current Version: 1.3.1** - Production Release
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.

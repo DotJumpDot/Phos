@@ -10,7 +10,7 @@ Full-stack interactive project generator CLI
 [![Node.js Version](https://img.shields.io/node/v/phos)](https://nodejs.org)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
-**Version 1.3.0 - Production Release** 🎉
+**Version 1.3.1 - Production Release** 🎉
 
 [View on npmjs.com](https://www.npmjs.com/package/phos)
 
@@ -25,12 +25,12 @@ Phos is a powerful CLI tool that scaffolds modern full-stack web applications wi
 ## Features
 
 - ✨ Interactive CLI with beautiful prompts
-- 🚀 Multiple backend frameworks (Elysia, FastAPI)
-- 🎨 Multiple frontend frameworks (Astro, Svelte, Next.js)
+- 🚀 Multiple backend frameworks (Elysia, FastAPI, NestJS)
+- 🎨 Multiple frontend frameworks (Astro, Svelte, Next.js, Vue)
 - 📦 Monorepo support with workspace configuration
 - 🛠️ Configurable tooling (TypeScript, ESLint, Prettier)
 - 🎨 CSS framework options (Tailwind, SCSS, CSS Modules)
-- 🧩 UI component library support (shadcn/ui, Radix UI)
+- 🧩 UI component library support (Ant Design, shadcn/ui, Radix UI, Vuetify)
 - 🧪 Testing framework options (Vitest, Playwright)
 - 🔤 Multiple package manager support (npm, yarn, pnpm, bun)
 - 📝 Automatic README generation
@@ -64,6 +64,7 @@ Phos is a powerful CLI tool that scaffolds modern full-stack web applications wi
 | ---------------------------------------- | ------- | ---------------------------------- |
 | [Elysia](https://elysiajs.com/)          | Bun     | Fast and elegant Bun web framework |
 | [FastAPI](https://fastapi.tiangolo.com/) | Python  | Modern Python web framework        |
+| [NestJS](https://nestjs.com/)           | Node.js | Progressive Node.js framework with TypeScript |
 
 #### Frontend
 
@@ -72,6 +73,7 @@ Phos is a powerful CLI tool that scaffolds modern full-stack web applications wi
 | [Astro](https://astro.build/)        | Modern static site generator           |
 | [SvelteKit](https://kit.svelte.dev/) | Full-stack Svelte framework            |
 | [Next.js](https://nextjs.org/)       | React framework with server components |
+| [Vue](https://vuejs.org/)            | Progressive JavaScript framework       |
 
 ## Quick Start
 
@@ -131,14 +133,13 @@ Phos will guide you through a series of questions to configure your project:
 5. **Backend: Use TypeScript?** - Enable TypeScript for backend
 6. **Backend: Add ESLint?** - Add ESLint configuration
 7. **Backend: Add Prettier?** - Add Prettier configuration
-8. **Frontend Framework** - Astro, Svelte, or Next.js
+8. **Frontend Framework** - Astro, Svelte, Next.js, or Vue
 9. **Frontend Package Manager** - npm, yarn, pnpm, or bun
 10. **Frontend: Use TypeScript?** - Enable TypeScript for frontend
 11. **Frontend: Add ESLint?** - Add ESLint configuration
 12. **Frontend: Add Prettier?** - Add Prettier configuration
 13. **Select CSS Framework** - No, Tailwind CSS, SCSS, or CSS Modules
-14. **Add UI Components?** - No, shadcn/ui, or Radix UI
-15. **Add Testing?** - No, Vitest, Playwright, or both
+14. **Add Testing?** - No, Vitest, Playwright, or both
 16. **Initialize Git?** - Initialize a Git repository
 17. **Install Dependencies?** - Auto-install dependencies after generation
 
@@ -209,7 +210,6 @@ npx phos create
 # Frontend: Add ESLint? Yes
 # Frontend: Add Prettier? Yes
 # CSS Framework: Tailwind CSS
-# UI Components: shadcn/ui
 # Testing: Vitest + Playwright
 # Initialize Git? Yes
 # Install dependencies? No
@@ -227,7 +227,6 @@ bunx phos create
 # Add ESLint? Yes
 # Add Prettier? Yes
 # CSS Framework: Tailwind CSS
-# UI Components: No
 # Testing: Vitest
 # Initialize Git? Yes
 # Install dependencies? No
@@ -278,6 +277,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 Phos follows [semantic versioning](https://semver.org/).
 
+- **1.3.1** - Patch release (Vue frontend support, documentation updates)
 - **1.3.0** - Minor release (NestJS backend support)
 - **1.2.1** - Patch release (TypeScript type fix)
 - **1.2.0** - Minor release (backend API architecture)

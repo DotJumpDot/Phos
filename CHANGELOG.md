@@ -4,6 +4,36 @@ All notable changes to Phos CLI will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.3.1] - 2026-02-13
+
+### Added
+
+- **Vue Frontend Support** - Complete Vue frontend framework integration
+  - Added Vue as a new frontend framework option alongside Astro, Svelte, and Next.js
+  - Vue Router for client-side routing
+  - Pinia for state management
+  - TypeScript support with Vitest for testing
+  - Playwright for E2E testing
+  - ESLint and Prettier configuration
+  - Comprehensive CLI generator for Vue projects
+  - Updated CLI to include Vue in framework selection
+  - Updated monorepo and single project generators to support Vue
+
+### Changed
+
+- **Documentation Updates**:
+  - Updated README.md to reflect all supported frameworks (Elysia, FastAPI, NestJS for backend; Astro, Svelte, Next.js, Vue for frontend)
+  - Removed UI component library references from documentation (feature not yet implemented)
+  - Updated version references to 1.3.1 across all documentation files
+  - Updated AGENTS.md to include Vue in supported frontends list
+- **CLI Framework Selection** - Added Vue option to frontend framework selector for both monorepo and single project modes
+
+### Fixed
+
+- **Documentation Accuracy** - Corrected README.md to accurately reflect implemented features
+  - Removed non-existent UI component library listings
+  - Updated framework lists to match actual implementation
+
 ## [1.3.0] - 2026-02-13
 
 ### Added
