@@ -4,17 +4,17 @@
 
 Full-stack interactive project generator CLI that scaffolds modern web applications with configurable backends and frontends.
 
-**Version:** 1.0.0 (Production Release)
+**Version:** 1.2.0 (Production Release)
 
 ### Core Features:
 
 1. **Interactive CLI** - Beautiful prompts using @clack/prompts
 2. **Multiple Backends** - Elysia (Bun), FastAPI (Python)
-3. **Multiple Frontends** - Astro, Svelte, Next.js
+3. **Multiple Frontends** - Astro, Svelte, Next.js, Vue
 4. **Monorepo Support** - Workspace configuration for scalable projects
 5. **Configurable Tooling** - TypeScript, ESLint, Prettier options
 6. **CSS Frameworks** - Tailwind, SCSS, CSS Modules
-7. **UI Components** - shadcn/ui, Radix UI
+7. **UI Components** - Framework-specific libraries (see below)
 8. **Testing Support** - Vitest, Playwright
 
 ### Technology Stack:
@@ -26,7 +26,7 @@ Full-stack interactive project generator CLI that scaffolds modern web applicati
 - **Template Engine**: Handlebars
 - **Terminal Colors**: picocolors
 - **Backend**: Elysia (Bun), FastAPI (Python)
-- **Frontend**: Astro, SvelteKit, Next.js
+- **Frontend**: Astro, SvelteKit, Next.js, Vue
 - **Package Managers**: npm, yarn, pnpm, bun
 
 ## 1. Development Workflow
@@ -55,7 +55,8 @@ src/
 │   └── frontends/
 │       ├── astro.ts        # Astro frontend generator
 │       ├── svelte.ts       # Svelte frontend generator
-│       └── nextjs.ts       # Next.js frontend generator
+│       ├── nextjs.ts       # Next.js frontend generator
+│       └── vue.ts         # Vue frontend generator
 ├── templates/              # Project templates
 └── utils/
     └── helpers.ts          # Helper functions
@@ -74,6 +75,36 @@ src/
 - Use **PascalCase** for generator files
 - Use **camelCase** for utility functions
 - Export generators as named exports
+
+### Backend API Architecture
+
+Backend projects follow a clean layered architecture:
+
+```
+src/
+├── api/                   # API routers (Elysia) or endpoints (FastAPI)
+│   └── user_api.ts       # User API router with validation
+├── service/               # Business logic layer
+│   └── user_service.ts   # User service with business rules
+├── sql/                   # Database query layer
+│   └── user_sql.ts       # User SQL query functions
+├── types/                 # Type definitions
+│   └── user_type.ts       # User entity and DTOs
+└── function/              # Helper functions
+    └── helper.ts         # Validation helpers
+```
+
+**Data Flow:**
+```
+API Layer (validation) → Service Layer (business logic) → SQL Layer (queries) → Database
+```
+
+**Responsibilities:**
+- **API Layer**: Request validation, error handling, routing
+- **Service Layer**: Business logic, uniqueness checks, data mapping
+- **SQL Layer**: Database queries, password hashing, CRUD operations
+- **Types Layer**: Entity definitions, DTOs, response models
+- **Function Layer**: Reusable validation and helper functions
 
 ## 3. Keep Dependencies in Sync
 
@@ -119,8 +150,44 @@ npm install <package>
 - **Astro** - Modern static site generator
 - **SvelteKit** - Full-stack Svelte framework
 - **Next.js** - React framework with server components
+- **Vue** - Progressive JavaScript framework
 
-## 6. Configuration Options
+## 6. UI Component Libraries by Framework
+
+### Next.js UI Libraries
+| Library | Description | Recommended |
+|----------|-------------|-------------|
+| **Ant Design** | Enterprise-class design system with 50+ components | ✅ Yes |
+| **shadcn/ui** | Customizable, Radix UI + Tailwind CSS | No |
+| **Radix UI** | Unstyled, accessible primitives | No |
+| **Material UI (MUI)** | Google Material Design, extensive ecosystem | No |
+| **HeroUI** | Beautiful, fast, Next.js App Router compatible | No |
+
+### Vue UI Libraries
+| Library | Description | Recommended |
+|----------|-------------|-------------|
+| **Vuetify** | Material Design, 80+ components, Vue 3 native | ✅ Yes |
+| **Element Plus** | Enterprise-focused, successor to Element UI | No |
+| **Quasar** | Full framework, 70+ components, cross-platform | No |
+| **PrimeVue** | 80+ components, data tables, calendars | No |
+| **Naive UI** | Vue 3 focused, great developer experience | No |
+
+### Astro UI Libraries
+| Library | Description | Recommended |
+|----------|-------------|-------------|
+| **daisyUI** | Tailwind CSS plugin, zero JS, 35+ themes | ✅ Yes |
+| **fulldev/ui** | Vanilla Astro, shadcn/ui compatible | No |
+| **shadcn/ui** | Works via React integration | No |
+
+### Svelte UI Libraries
+| Library | Description | Recommended |
+|----------|-------------|-------------|
+| **shadcn-svelte** | 1:1 port of shadcn/ui, highly customizable | ✅ Yes |
+| **Svelte Material UI (SMUI)** | Material Design, 40+ components | No |
+| **Svelte Headless UI** | Unstyled, accessible primitives | No |
+| **Agnostic UI** | Cross-framework, works with React, Vue, Angular | No |
+  
+  ## 7. Configuration Options
 
 ### Backend Options
 
@@ -129,15 +196,14 @@ npm install <package>
 - **Prettier** - Add Prettier configuration
 
 ### Frontend Options
-
 - **TypeScript** - Enable/disable TypeScript
 - **ESLint** - Add ESLint configuration
 - **Prettier** - Add Prettier configuration
 - **CSS Framework** - Tailwind, SCSS, CSS Modules
-- **UI Components** - shadcn/ui, Radix UI
+- **UI Components** - Framework-specific libraries (see section 6)
 - **Testing** - Vitest, Playwright, or both
 
-## 7. Available Commands
+## 8. Available Commands
 
 | Command                   | Purpose                        |
 | ------------------------- | ------------------------------ |
@@ -148,7 +214,7 @@ npm install <package>
 | `bun link`                | Link CLI globally              |
 | `phos create`             | Run CLI (after linking)        |
 
-## 8. Versioning
+## 9. Versioning
 
 Phos CLI follows semantic versioning:
 
@@ -167,6 +233,6 @@ Phos CLI follows semantic versioning:
   - Complete rewrites
   - Production-ready releases
 
-**Current Version: 1.0.0** - Production Release
+**Current Version: 1.2.0** - Production Release
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.

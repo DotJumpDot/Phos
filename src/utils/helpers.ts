@@ -33,7 +33,7 @@ export interface GeneratorConfig {
     prettier: boolean;
   };
   frontend?: {
-    framework: "astro" | "svelte" | "nextjs";
+    framework: "astro" | "svelte" | "nextjs" | "vue";
     packageManager: "npm" | "yarn" | "pnpm" | "bun";
     typescript: boolean;
     eslint: boolean;

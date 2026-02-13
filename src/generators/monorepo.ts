@@ -14,6 +14,7 @@ import { generateFastAPIBackend } from "@/generators/backends/fastapi.js";
 import { generateAstroFrontend } from "@/generators/frontends/astro.js";
 import { generateSvelteFrontend } from "@/generators/frontends/svelte.js";
 import { generateNextJSFrontend } from "@/generators/frontends/nextjs.js";
+import { generateVueFrontend } from "@/generators/frontends/vue.js";
 import { spinner } from "@clack/prompts";
 
 export async function generateMonorepo(config: GeneratorConfig): Promise<void> {
@@ -64,6 +65,9 @@ export async function generateMonorepo(config: GeneratorConfig): Promise<void> {
         break;
       case "nextjs":
         await generateNextJSFrontend(frontendPath, config);
+        break;
+      case "vue":
+        await generateVueFrontend(frontendPath, config);
         break;
     }
     s.stop(`✨ ${capitalize(config.frontend.framework)} frontend generated`);
@@ -306,7 +310,13 @@ ${
 - Follow Svelte best practices
 - Use TypeScript if enabled
 `
-      : `
+      : config.frontend?.framework === "vue"
+        ? `
+- Use Vue 3 Composition API
+- Follow Vue best practices
+- Use TypeScript if enabled
+`
+        : `
 - Use Next.js conventions
 - Use App Router for new features
 - Use TypeScript if enabled

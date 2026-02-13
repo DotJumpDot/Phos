@@ -55,15 +55,32 @@ program
     const projectTypeTyped = projectType as "monorepo" | "single";
 
     let backendFramework: "elysia" | "fastapi" | undefined;
-    let frontendFramework: "astro" | "svelte" | "nextjs" | undefined;
-    let selectedFramework: "elysia" | "fastapi" | "astro" | "svelte" | "nextjs" | undefined;
+    let frontendFramework: "astro" | "svelte" | "nextjs" | "vue" | undefined;
+    let selectedFramework: "elysia" | "fastapi" | "astro" | "svelte" | "nextjs" | "vue" | undefined;
     let packageManager: "npm" | "yarn" | "pnpm" | "bun" | "venv" | "pip";
     let frontendPackageManager;
     let useTypeScript: boolean;
     let addESLint: boolean;
     let addPrettier: boolean;
     let cssFramework: "none" | "tailwind" | "scss" | "css-modules" = "none";
-    let uiComponents: "none" | "shadcn" | "radix" = "none";
+    let uiComponents: 
+      | "none"
+      | "ant-design"
+      | "shadcn"
+      | "radix"
+      | "mui"
+      | "heroui"
+      | "vuetify"
+      | "element-plus"
+      | "quasar"
+      | "primevue"
+      | "naive-ui"
+      | "daisyui"
+      | "fulldev-ui"
+      | "shadcn-svelte"
+      | "smui"
+      | "headless-ui"
+      | "agnostic-ui" = "none";
     let testing: "none" | "vitest" | "playwright" | "both" = "none";
 
     if (projectTypeTyped === "monorepo") {
@@ -153,8 +170,9 @@ program
           { value: "astro", label: "Astro" },
           { value: "svelte", label: "Svelte" },
           { value: "nextjs", label: "NextJS" },
+          { value: "vue", label: "Vue" },
         ],
-      })) as "astro" | "svelte" | "nextjs";
+      })) as "astro" | "svelte" | "nextjs" | "vue";
 
       if (typeof frontendFramework !== "string") {
         outro(pc.red("Project creation cancelled"));
@@ -185,12 +203,19 @@ program
                     { value: "pnpm", label: "pnpm" },
                     { value: "bun", label: "bun" },
                   ]
-                : [
-                    { value: "npm", label: "npm" },
-                    { value: "yarn", label: "yarn" },
-                    { value: "pnpm", label: "pnpm" },
-                    { value: "bun", label: "bun" },
-                  ],
+                : frontendFramework === "vue"
+                  ? [
+                      { value: "npm", label: "npm (Recommended)" },
+                      { value: "yarn", label: "yarn" },
+                      { value: "pnpm", label: "pnpm" },
+                      { value: "bun", label: "bun" },
+                    ]
+                  : [
+                      { value: "npm", label: "npm" },
+                      { value: "yarn", label: "yarn" },
+                      { value: "pnpm", label: "pnpm" },
+                      { value: "bun", label: "bun" },
+                    ],
       });
 
       if (typeof frontendPackageManager !== "string") {
@@ -243,14 +268,48 @@ program
         process.exit(0);
       }
 
+      const uiComponentOptions = 
+        frontendFramework === "nextjs"
+          ? [
+              { value: "none", label: "No" },
+              { value: "ant-design", label: "Ant Design (Recommended)" },
+              { value: "shadcn", label: "shadcn/ui" },
+              { value: "radix", label: "Radix UI" },
+              { value: "mui", label: "Material UI (MUI)" },
+              { value: "heroui", label: "HeroUI" },
+            ]
+          : frontendFramework === "vue"
+            ? [
+                { value: "none", label: "No" },
+                { value: "vuetify", label: "Vuetify (Recommended)" },
+                { value: "element-plus", label: "Element Plus" },
+                { value: "quasar", label: "Quasar" },
+                { value: "primevue", label: "PrimeVue" },
+                { value: "naive-ui", label: "Naive UI" },
+              ]
+            : frontendFramework === "astro"
+              ? [
+                  { value: "none", label: "No" },
+                  { value: "daisyui", label: "daisyUI (Recommended)" },
+                  { value: "fulldev-ui", label: "fulldev/ui" },
+                  { value: "shadcn", label: "shadcn/ui" },
+                ]
+              : frontendFramework === "svelte"
+                ? [
+                    { value: "none", label: "No" },
+                    { value: "shadcn-svelte", label: "shadcn-svelte (Recommended)" },
+                    { value: "smui", label: "Svelte Material UI (SMUI)" },
+                    { value: "headless-ui", label: "Svelte Headless UI" },
+                    { value: "agnostic-ui", label: "Agnostic UI" },
+                  ]
+                : [
+                    { value: "none", label: "No" },
+                  ];
+
       uiComponents = (await select({
         message: "Add UI Components?",
-        options: [
-          { value: "none", label: "No" },
-          { value: "shadcn", label: "shadcn/ui" },
-          { value: "radix", label: "Radix UI" },
-        ],
-      })) as "none" | "shadcn" | "radix";
+        options: uiComponentOptions,
+      })) as typeof uiComponentOptions[number]["value"];
 
       if (typeof uiComponents !== "string") {
         outro(pc.red("Project creation cancelled"));
@@ -280,8 +339,9 @@ program
           { value: "svelte", label: "Svelte" },
           { value: "nextjs", label: "NextJS" },
           { value: "astro", label: "Astro" },
+          { value: "vue", label: "Vue" },
         ],
-      })) as "elysia" | "fastapi" | "svelte" | "nextjs" | "astro";
+      })) as "elysia" | "fastapi" | "svelte" | "nextjs" | "astro" | "vue";
 
       if (typeof selectedFramework !== "string") {
         outro(pc.red("Project creation cancelled"));
@@ -357,7 +417,7 @@ program
           process.exit(0);
         }
       } else {
-        frontendFramework = selectedFramework as "astro" | "svelte" | "nextjs";
+        frontendFramework = selectedFramework as "astro" | "svelte" | "nextjs" | "vue";
         packageManager = (await select({
           message: "Select package manager",
           options:
@@ -379,6 +439,13 @@ program
                   ? [
                       { value: "yarn", label: "yarn (Recommended)" },
                       { value: "npm", label: "npm" },
+                      { value: "pnpm", label: "pnpm" },
+                      { value: "bun", label: "bun" },
+                    ]
+                : selectedFramework === "vue"
+                  ? [
+                      { value: "npm", label: "npm (Recommended)" },
+                      { value: "yarn", label: "yarn" },
                       { value: "pnpm", label: "pnpm" },
                       { value: "bun", label: "bun" },
                     ]
@@ -440,14 +507,48 @@ program
           process.exit(0);
         }
 
+        const singleUiComponentOptions =
+          selectedFramework === "nextjs"
+            ? [
+                { value: "none", label: "No" },
+                { value: "ant-design", label: "Ant Design (Recommended)" },
+                { value: "shadcn", label: "shadcn/ui" },
+                { value: "radix", label: "Radix UI" },
+                { value: "mui", label: "Material UI (MUI)" },
+                { value: "heroui", label: "HeroUI" },
+              ]
+            : selectedFramework === "vue"
+              ? [
+                  { value: "none", label: "No" },
+                  { value: "vuetify", label: "Vuetify (Recommended)" },
+                  { value: "element-plus", label: "Element Plus" },
+                  { value: "quasar", label: "Quasar" },
+                  { value: "primevue", label: "PrimeVue" },
+                  { value: "naive-ui", label: "Naive UI" },
+                ]
+              : selectedFramework === "astro"
+                ? [
+                    { value: "none", label: "No" },
+                    { value: "daisyui", label: "daisyUI (Recommended)" },
+                    { value: "fulldev-ui", label: "fulldev/ui" },
+                    { value: "shadcn", label: "shadcn/ui" },
+                  ]
+                : selectedFramework === "svelte"
+                  ? [
+                      { value: "none", label: "No" },
+                      { value: "shadcn-svelte", label: "shadcn-svelte (Recommended)" },
+                      { value: "smui", label: "Svelte Material UI (SMUI)" },
+                      { value: "headless-ui", label: "Svelte Headless UI" },
+                      { value: "agnostic-ui", label: "Agnostic UI" },
+                    ]
+                  : [
+                      { value: "none", label: "No" },
+                    ];
+
         uiComponents = (await select({
           message: "Add UI Components?",
-          options: [
-            { value: "none", label: "No" },
-            { value: "shadcn", label: "shadcn/ui" },
-            { value: "radix", label: "Radix UI" },
-          ],
-        })) as "none" | "shadcn" | "radix";
+          options: singleUiComponentOptions,
+        })) as typeof singleUiComponentOptions[number]["value"];
 
         if (typeof uiComponents !== "string") {
           outro(pc.red("Project creation cancelled"));

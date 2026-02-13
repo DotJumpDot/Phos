@@ -12,6 +12,7 @@ import { generateFastAPIBackend } from "@/generators/backends/fastapi.js";
 import { generateAstroFrontend } from "@/generators/frontends/astro.js";
 import { generateSvelteFrontend } from "@/generators/frontends/svelte.js";
 import { generateNextJSFrontend } from "@/generators/frontends/nextjs.js";
+import { generateVueFrontend } from "@/generators/frontends/vue.js";
 import { spinner } from "@clack/prompts";
 
 export async function generateSingle(config: GeneratorConfig): Promise<void> {
@@ -57,6 +58,9 @@ export async function generateSingle(config: GeneratorConfig): Promise<void> {
         break;
       case "nextjs":
         await generateNextJSFrontend(projectPath, config);
+        break;
+      case "vue":
+        await generateVueFrontend(projectPath, config);
         break;
     }
     s.stop(`✨ ${capitalize(config.frontend.framework)} frontend generated`);
@@ -146,6 +150,10 @@ pnpm-debug.log*
 
 # Svelte
 .svelte-kit/
+
+# Vue
+dist/
+.vite/
 
 # Python
 __pycache__/

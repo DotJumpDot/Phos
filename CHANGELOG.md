@@ -4,6 +4,26 @@ All notable changes to Phos CLI will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.0] - 2026-02-13
+
+### Added
+
+- **Backend API Architecture**: Complete user CRUD API implementation for both Elysia and FastAPI
+  - Added layered architecture with API, Service, SQL, Types, and Function layers
+  - Data flow: API (validation) → Service (business logic) → SQL (queries) → Database
+  - User entity with fields: id, email, username, full_name, password, avatar_url, bio, role, is_active, created_at, updated_at
+  - Create, Read, Update, Delete, Soft Delete, and Search operations
+  - Password hashing with bcrypt (SALT_ROUNDS = 10)
+  - Validation helpers for email, string, and boolean types
+  - Proper error handling with appropriate HTTP status codes
+
+### Changed
+
+- **Backend Templates**: Enhanced both Elysia and FastAPI templates with user API example
+  - Elysia: Uses `db` template literal syntax for SQL queries
+  - FastAPI: Uses async/await with asyncpg for database operations
+  - Both include comprehensive CRUD operations and validation
+
 ## [1.1.0] - 2026-02-10
 
 ### Changed
