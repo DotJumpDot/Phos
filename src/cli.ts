@@ -309,7 +309,7 @@ program
       uiComponents = (await select({
         message: "Add UI Components?",
         options: uiComponentOptions,
-      })) as typeof uiComponentOptions[number]["value"];
+      })) as typeof uiComponents;
 
       if (typeof uiComponents !== "string") {
         outro(pc.red("Project creation cancelled"));
@@ -548,7 +548,7 @@ program
         uiComponents = (await select({
           message: "Add UI Components?",
           options: singleUiComponentOptions,
-        })) as typeof singleUiComponentOptions[number]["value"];
+        })) as typeof uiComponents;
 
         if (typeof uiComponents !== "string") {
           outro(pc.red("Project creation cancelled"));

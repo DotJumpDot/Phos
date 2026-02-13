@@ -4,7 +4,7 @@
 
 Full-stack interactive project generator CLI that scaffolds modern web applications with configurable backends and frontends.
 
-**Version:** 1.2.0 (Production Release)
+**Version:** 1.2.1 (Production Release)
 
 ### Core Features:
 
@@ -233,6 +233,6 @@ Phos CLI follows semantic versioning:
   - Complete rewrites
   - Production-ready releases
 
-**Current Version: 1.2.0** - Production Release
+**Current Version: 1.2.1** - Production Release
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
