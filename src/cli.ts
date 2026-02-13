@@ -54,9 +54,9 @@ program
 
     const projectTypeTyped = projectType as "monorepo" | "single";
 
-    let backendFramework: "elysia" | "fastapi" | undefined;
+    let backendFramework: "elysia" | "fastapi" | "nestjs" | undefined;
     let frontendFramework: "astro" | "svelte" | "nextjs" | "vue" | undefined;
-    let selectedFramework: "elysia" | "fastapi" | "astro" | "svelte" | "nextjs" | "vue" | undefined;
+    let selectedFramework: "elysia" | "fastapi" | "nestjs" | "astro" | "svelte" | "nextjs" | "vue" | undefined;
     let packageManager: "npm" | "yarn" | "pnpm" | "bun" | "venv" | "pip";
     let frontendPackageManager;
     let useTypeScript: boolean;
@@ -89,8 +89,9 @@ program
         options: [
           { value: "elysia", label: "Elysia" },
           { value: "fastapi", label: "FastAPI" },
+          { value: "nestjs", label: "NestJS" },
         ],
-      })) as "elysia" | "fastapi";
+      })) as "elysia" | "fastapi" | "nestjs";
 
       if (typeof backendFramework !== "string") {
         outro(pc.red("Project creation cancelled"));
@@ -108,7 +109,7 @@ program
                 { value: "venv", label: "venv (virtual environment)" },
                 { value: "pip", label: "pip (system)" },
               ]
-            : backendFramework === "elysia"
+            : backendFramework === "elysia" || backendFramework === "nestjs"
               ? [
                   { value: "bun", label: "bun (Recommended)" },
                   { value: "npm", label: "npm" },
@@ -336,20 +337,21 @@ program
         options: [
           { value: "elysia", label: "ElysiaJS" },
           { value: "fastapi", label: "FastAPI" },
+          { value: "nestjs", label: "NestJS" },
           { value: "svelte", label: "Svelte" },
           { value: "nextjs", label: "NextJS" },
           { value: "astro", label: "Astro" },
           { value: "vue", label: "Vue" },
         ],
-      })) as "elysia" | "fastapi" | "svelte" | "nextjs" | "astro" | "vue";
+      })) as "elysia" | "fastapi" | "nestjs" | "svelte" | "nextjs" | "astro" | "vue";
 
       if (typeof selectedFramework !== "string") {
         outro(pc.red("Project creation cancelled"));
         process.exit(0);
       }
 
-      if (selectedFramework === "elysia" || selectedFramework === "fastapi") {
-        backendFramework = selectedFramework as "elysia" | "fastapi";
+      if (selectedFramework === "elysia" || selectedFramework === "fastapi" || selectedFramework === "nestjs") {
+        backendFramework = selectedFramework as "elysia" | "fastapi" | "nestjs";
         packageManager = (await select({
           message:
             selectedFramework === "fastapi"

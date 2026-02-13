@@ -26,7 +26,7 @@ export interface GeneratorConfig {
   projectName: string;
   projectType: "monorepo" | "single";
   backend?: {
-    framework: "elysia" | "fastapi";
+    framework: "elysia" | "fastapi" | "nestjs";
     packageManager: "npm" | "yarn" | "pnpm" | "bun" | "venv" | "pip";
     typescript: boolean;
     eslint: boolean;

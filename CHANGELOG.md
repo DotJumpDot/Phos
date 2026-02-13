@@ -4,6 +4,31 @@ All notable changes to Phos CLI will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.3.0] - 2026-02-13
+
+### Added
+
+- **NestJS Backend Support** - Complete NestJS backend framework integration
+  - Added NestJS as a new backend framework option alongside Elysia and FastAPI
+  - TypeORM integration with PostgreSQL database support
+  - Swagger API documentation with automatic setup at `/api` endpoint
+  - Complete user CRUD API implementation
+  - User entity with fields: id, email, username, fullName, password, avatarUrl, bio, role, isActive, createdAt, updatedAt
+  - Security features:
+    - bcrypt password hashing (SALT_ROUNDS = 10)
+    - JWT authentication support via @nestjs/jwt and passport-jwt
+    - Request validation with class-validator
+  - Configuration via environment variables (.env.example provided)
+  - Comprehensive CLI generator for NestJS projects
+  - Updated CLI to include NestJS in framework selection
+  - Updated monorepo and single project generators to support NestJS
+
+### Changed
+
+- **CLI Framework Selection** - Added NestJS option to backend framework selector
+- **Documentation** - Updated AGENTS.md with NestJS backend options and architecture
+- **Dependencies** - Updated template package.json with required NestJS packages
+
 ## [1.2.1] - 2026-02-13
 
 ### Fixed

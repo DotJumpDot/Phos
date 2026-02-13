@@ -4,12 +4,12 @@
 
 Full-stack interactive project generator CLI that scaffolds modern web applications with configurable backends and frontends.
 
-**Version:** 1.2.1 (Production Release)
+**Version:** 1.3.0 (Production Release)
 
 ### Core Features:
 
 1. **Interactive CLI** - Beautiful prompts using @clack/prompts
-2. **Multiple Backends** - Elysia (Bun), FastAPI (Python)
+2. **Multiple Backends** - Elysia (Bun), FastAPI (Python), NestJS (Node.js)
 3. **Multiple Frontends** - Astro, Svelte, Next.js, Vue
 4. **Monorepo Support** - Workspace configuration for scalable projects
 5. **Configurable Tooling** - TypeScript, ESLint, Prettier options
@@ -25,7 +25,7 @@ Full-stack interactive project generator CLI that scaffolds modern web applicati
 - **File Operations**: fs-extra
 - **Template Engine**: Handlebars
 - **Terminal Colors**: picocolors
-- **Backend**: Elysia (Bun), FastAPI (Python)
+- **Backend**: Elysia (Bun), FastAPI (Python), NestJS (Node.js)
 - **Frontend**: Astro, SvelteKit, Next.js, Vue
 - **Package Managers**: npm, yarn, pnpm, bun
 
@@ -144,6 +144,7 @@ npm install <package>
 
 - **Elysia** - Fast and elegant Bun web framework
 - **FastAPI** - Modern Python web framework
+- **NestJS** - Progressive Node.js framework with TypeScript
 
 ### Supported Frontends
 
@@ -203,6 +204,14 @@ npm install <package>
 - **UI Components** - Framework-specific libraries (see section 6)
 - **Testing** - Vitest, Playwright, or both
 
+### NestJS Backend Options
+
+- **TypeORM** - PostgreSQL database with TypeORM
+- **Swagger** - API documentation with Swagger UI
+- **JWT Auth** - JWT authentication with passport-jwt
+- **Validation** - Request validation with class-validator
+- **Password Hashing** - bcrypt for secure password storage
+
 ## 8. Available Commands
 
 | Command                   | Purpose                        |
@@ -233,6 +242,6 @@ Phos CLI follows semantic versioning:
   - Complete rewrites
   - Production-ready releases
 
-**Current Version: 1.2.1** - Production Release
+**Current Version: 1.3.0** - Production Release
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.

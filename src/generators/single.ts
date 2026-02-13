@@ -9,6 +9,7 @@ import {
 } from "@/utils/helpers.js";
 import { generateElysiaBackend } from "@/generators/backends/elysia.js";
 import { generateFastAPIBackend } from "@/generators/backends/fastapi.js";
+import { generateNestJSBackend } from "@/generators/backends/nestjs.js";
 import { generateAstroFrontend } from "@/generators/frontends/astro.js";
 import { generateSvelteFrontend } from "@/generators/frontends/svelte.js";
 import { generateNextJSFrontend } from "@/generators/frontends/nextjs.js";
@@ -42,6 +43,9 @@ export async function generateSingle(config: GeneratorConfig): Promise<void> {
         break;
       case "fastapi":
         await generateFastAPIBackend(projectPath, config);
+        break;
+      case "nestjs":
+        await generateNestJSBackend(projectPath, config);
         break;
     }
     s.stop(`✨ ${capitalize(config.backend.framework)} backend generated`);
