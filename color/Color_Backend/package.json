@@ -1,0 +1,26 @@
+{
+  "name": "Color_Backend",
+  "version": "0.1.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": " run --watch src/index.ts",
+    "build": " build src/index.ts",
+    "start": " run dist/index.js"
+  },
+  "dependencies": {
+    "@elysiajs/cors": "latest",
+    "@elysiajs/swagger": "latest",
+    "@types/bcrypt": "latest",
+    "@types/jsonwebtoken": "latest",
+    "bcrypt": "latest",
+    "dotenv": "latest",
+    "elysia": "latest",
+    "jsonwebtoken": "latest",
+    "postgres": "^3.4.8",
+    "uuid": "latest"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "module": "src/index.js"
+}

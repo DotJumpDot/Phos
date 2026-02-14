@@ -39,7 +39,24 @@ export interface GeneratorConfig {
     eslint: boolean;
     prettier: boolean;
     cssFramework: "none" | "tailwind" | "scss" | "css-modules";
-    uiComponents: "none" | "shadcn" | "radix";
+    uiComponents:
+      | "none"
+      | "ant-design"
+      | "shadcn"
+      | "radix"
+      | "mui"
+      | "heroui"
+      | "vuetify"
+      | "element-plus"
+      | "quasar"
+      | "primevue"
+      | "naive-ui"
+      | "daisyui"
+      | "fulldev-ui"
+      | "shadcn-svelte"
+      | "smui"
+      | "headless-ui"
+      | "agnostic-ui";
     testing: "none" | "vitest" | "playwright" | "both";
   };
   git: boolean;

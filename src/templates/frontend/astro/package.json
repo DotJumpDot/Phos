@@ -4,25 +4,32 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro"{{#if frontend.eslint}},
-    "lint": "eslint ."{{/if}}{{#if frontend.prettier}},
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview"{{#if frontend.eslint}},
+    "lint": "eslint . --fix"{{/if}}{{#if frontend.prettier}},
     "format": "prettier --write ."{{/if}}
   },
   "dependencies": {
-    "astro": "^5.17.1"
+    "astro": "^5.2.5"{{#if (eq frontend.uiComponents 'fulldev-ui')}},
+    "@fulldev/ui": "^0.6.1"{{/if}}
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/ts-plugin": "^1.10.2",
-    "typescript": "^5.8.2"{{#if frontend.eslint}},
+    "@astrojs/ts-plugin": "^1.10.4",
+    "typescript": "^5.7.2"{{#if frontend.eslint}},
     "eslint": "^9",
-    "eslint-plugin-astro": "^1.3.1",
-    "eslint-config-prettier": "^10.1.8",
-    "globals": "^17.3.0",
-    "typescript-eslint": "^8.54.0"{{/if}}{{#if frontend.prettier}},
-    "prettier": "^3.8.1",
-    "prettier-plugin-astro": "^0.14.1"{{/if}}
+    "eslint-plugin-astro": "^1"{{/if}}{{#if (eq frontend.cssFramework 'tailwind')}},
+    "@astrojs/tailwind": "^6",
+    "tailwindcss": "^4.1.18f}}{{#if (eq frontend.uiComponents 'daisyui')}},
+    "daisyui": "^5.5.18"{{/if}}{{#if (eq frontend.uiComponents 'shadcn')}},
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.564.0",
+    "tailwind-merge": "^3.4.0",
+    "@astrojs/react": "^4.2.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"{{/if}}{{#if frontend.prettier}},
+    "prettier": "^3"{{/if}}
   }
 }
