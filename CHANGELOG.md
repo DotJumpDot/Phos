@@ -4,6 +4,27 @@ All notable changes to Phos CLI will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.3.2] - 2026-02-14
+
+### Added
+- **UI Component Library Implementation** - Complete UI library support for all frontend frameworks
+  - Next.js: Ant Design, shadcn/ui, Radix UI, Material UI, HeroUI
+  - Vue: Vuetify, Element Plus, Quasar, PrimeVue, Naive UI
+  - Astro: daisyUI, fulldev/ui, shadcn/ui (via React integration)
+  - Svelte: shadcn-svelte, Svelte Material UI, Headless UI, Agnostic UI
+  - All UI library dependencies are automatically added to package.json via Handlebars templates
+  - Framework-specific configuration included for each UI library
+
+### Changed
+- **Template-Based UI Library Support** - Moved from programmatic installation to template-based approach
+  - UI library dependencies now handled in package.json templates using Handlebars conditionals
+  - Simplified generator code by removing programmatic dependency installation
+  - Cleaner separation between template configuration and generation logic
+- **GeneratorConfig Type** - Updated to include all UI library options across all frameworks
+  - Added 16 UI library options across 4 frontend frameworks
+  - Each framework now has specific UI library options available
+- **Documentation** - Updated version references to 1.3.2
+
 ## [1.3.1] - 2026-02-13
 
 ### Added
